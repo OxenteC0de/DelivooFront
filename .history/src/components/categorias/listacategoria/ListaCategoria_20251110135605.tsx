@@ -1,0 +1,74 @@
+import { useContext, useEffect, useState } from 'react';
+import CardCategoria from '../cardcategoria/CardCategoria';
+import type Categoria from '../../../models/Categoria';
+//import { AuthContext } from '../../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+//import { buscar } from '../../../services/Service';
+import { SyncLoader } from 'react-spinners';
+
+function ListaCategorias() {
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const [categorias, setCategorias] = useState<Categoria[]>([])
+  
+  const navigate = useNavigate()
+
+  // desestruturação de objeto
+  const {usuario, handleLogout} = useContext(AuthContext)
+  const token = usuario.token
+
+  useEffect(() => {
+    // voltar o usuario pra tela de login
+    if (token === '') {
+      alert('Acesso negado')
+      navigate('/login')
+    }
+  }, [token])
+
+  async function buscarCategorias() {
+    try {
+      setIsLoading(true)
+      // essa linha aqui ta fazendo tal coisa
+      await buscar('/categorias', setCategorias, {
+        headers: {
+          Authorization: token
+        }
+      })
+    } catch (error: any) {
+      if(error.toString().includes('401')) {
+        alert('Sessão expirada')
+        handleLogout()
+      }
+      console.log(error);
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    buscarCategorias()
+  }, [categorias.length])
+
+  
+  return (
+    <>
+    <h2 className='text-center font-bold text-3xl'>Lista de temas</h2>
+    {isLoading && (
+      <div className='flex justify-center my-8'><SyncLoader size={32} color='#131515' /></div>
+    )}
+
+    {(!isLoading && categorias.length === 0) && (
+      <span className='text-3xl text-center my-8'>Nenhum tema encontrado!</span>
+    )}
+
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 container mx-auto">
+      {categorias.map(categoria => (
+        <CardCategoria categoria={categoria} />
+      ))}
+    </div>
+    </>
+  );
+}
+
+export default ListaCategorias;
