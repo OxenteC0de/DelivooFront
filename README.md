@@ -1,73 +1,166 @@
-# React + TypeScript + Vite
+<p align="center">
+<img src="./src/assets/logo.png" alt="Logo Delivoo" width="350"/>
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### 📅 Data
+11/11/2025 
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🍔 **Delivoo — O sabor que chega voando**
 
-## React Compiler
+Somos uma plataforma de delivery de alimentos que conecta você aos melhores restaurantes da sua cidade — com apenas alguns cliques, seu prato favorito está a caminho.
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+Mais do que entregas, oferecemos **experiências**.
+Seja um almoço no trabalho, um jantar especial ou aquele lanche de madrugada, a **Delivoo** está sempre pronta para levar sabor até você.
 
-## Expanding the ESLint configuration
+Com **tecnologia inteligente, logística eficiente e um cardápio variado**, nossa missão é transformar sua fome em felicidade — todos os dias, a qualquer hora.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+🧩 **Funcionalidades por Módulo**
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+👤 **Usuário**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Criar, listar, editar e excluir conta com segurança.
+
+- Gerenciamento completo de autenticação e permissões.
+
+🍱 **Categoria**
+
+- Cadastrar, filtrar e buscar categorias de alimentos.
+
+- Associação direta com produtos cadastrados.
+
+🛒 **Produto**
+
+- Criar, visualizar, atualizar e excluir produtos.
+
+- Controle de estoque e vinculação a categorias.
+
+---
+
+⚙️ **Funcionalidade Adicional**
+
+Implementamos um recurso para recomendar produtos saudáveis aos usuários.
+
+Em um cenário em que o consumo de alimentos ultraprocessados e pouco nutritivos tem crescido de forma acelerada, o papel da tecnologia na promoção de hábitos alimentares saudáveis torna-se fundamental.
+
+A funcionalidade “Produtos Saudáveis” da **Delivoo** foi pensada justamente para contribuir com essa causa.
+Através dela, o sistema é capaz de recomendar e destacar alimentos mais equilibrados, ajudando os usuários a fazerem escolhas conscientes e benéficas à saúde no momento do pedido.
+
+Além de facilitar a navegação e personalizar a experiência, esse recurso reforça o compromisso da plataforma com o bem-estar dos consumidores, incentivando práticas alimentares mais sustentáveis e equilibradas.
+
+---
+
+**Principais Métodos**
+
+```bash
+@Get('/recomendacoes')
+recomendarProdutosSaudaveis(): Promise<Produto[]> {
+  return this.produtoService.recomendarProdutosSaudaveis();
+}
+
+@Patch(':id/saudavel')
+marcaSaudavel(@Param('id') id: number): Promise<Produto> {
+  return this.produtoService.marcarSaudavel(id);
+}
+
+@Patch(':id/nao-saudavel')
+marcaNaoSaudavel(@Param('id') id: number): Promise<Produto> {
+  return this.produtoService.marcarNaoSaudavel(id);
+}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**Descrição dos métodos**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- recomendarProdutosSaudaveis(): Retorna uma lista de produtos recomendados como saudáveis.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- marcaSaudavel(id: number): Marca um produto como saudável.
+
+- marcaNaoSaudavel(id: number): Marca um produto como não saudável.
+
+---
+
+🧠 **Tecnologias Utilizadas**
+
+- TypeScript: Linguagem utilizada para tipagem e estruturação do código.
+- NestJS: Framework Node.js utilizado para criar a API.
+- MySQL: Banco de dados relacional do projeto.
+- TypeORM: ORM para mapeamento e manipulação de entidades.
+- Insomnia: Testes e requisições HTTP da API.
+- JWT (JSON Web Token):	Autenticação segura dos usuários.
+- Render:	Plataforma de deploy utilizada.
+
+---
+
+💻 **Como Rodar o Projeto**
+
+🧾 **Pré-requisitos**
+
+Certifique-se de ter instalado em sua máquina:
+
+- Git
+- Node.js (LTS)
+- npm ou Yarn
+- PostgreSQL
+
+---
+
+🚀 **Passo a Passo**
+
+1️⃣ **Clonar o repositório**
+```bash
+git clone https://github.com/OxenteC0de/Delivoo.git
+cd Delivoo
 ```
+
+2️⃣ **Instalar as dependências**
+```bash
+npm install
+```
+
+3️⃣ **Configurar o banco de dados**
+
+No arquivo app.module.ts, configure suas credenciais:
+```bash
+ TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'root',
+      database: 'db_delivoo',
+      entities: [],
+      synchronize: true,
+    })
+```
+
+4️⃣ **Rodar o projeto**
+```bash
+npm run start:dev
+```
+
+---
+
+✅ O servidor estará disponível em: 
+
+👉 http://localhost:4000
+
+---
+
+**Equipe Responsável**
+
+David Barbosa – Desenvolvedor, documentação
+
+Dilvani – Desenvolvedora, identidade visual
+
+Janaína Bezerra – Desenvolvedora
+
+Karine Santos – Desenvolvedora
+
+Tauane Soares – Desenvolvedora
+
+William Almeida – Scrum Master (líder), desenvolvedor
+
+Winnie Sant’Ana – Desenvolvedora
