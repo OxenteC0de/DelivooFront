@@ -78,8 +78,6 @@ marcaNaoSaudavel(@Param('id') id: number): Promise<Produto> {
 
 - marcaSaudavel(id: number): Marca um produto como saudável.
 
-- marcaNaoSaudavel(id: number): Marca um produto como não saudável.
-
 ---
 
 🧠 **Tecnologias Utilizadas**
@@ -91,6 +89,9 @@ marcaNaoSaudavel(@Param('id') id: number): Promise<Produto> {
 - Insomnia: Testes e requisições HTTP da API.
 - JWT (JSON Web Token):	Autenticação segura dos usuários.
 - Render:	Plataforma de deploy utilizada.
+- React: Biblioteca JavaScript utilizada para construção da interface do usuário (frontend) de forma dinâmica e componentizada.
+- Tailwind: Framework CSS utilitário usado para estilizar os componentes com rapidez e consistência, sem sair do HTML/JSX.
+- Axios: Biblioteca para realizar requisições HTTP entre o frontend e o backend, facilitando a comunicação com a API.
 
 ---
 
@@ -111,7 +112,7 @@ Certifique-se de ter instalado em sua máquina:
 
 1️⃣ **Clonar o repositório**
 ```bash
-git clone https://github.com/OxenteC0de/Delivoo.git
+git clone https://github.com/OxenteC0de/DelivooFront.git
 cd Delivoo
 ```
 
