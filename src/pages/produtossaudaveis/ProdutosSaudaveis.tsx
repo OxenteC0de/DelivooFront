@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { SyncLoader } from "react-spinners";
-import { buscar } from "../../services/Service";
-import CardProduto from "../../components/produtos/CardProduto";
-
+import CardProduto from "../../components/produto/cardproduto/CardProduto";
+import type Produto from "../../models/Produto";
+import { Leaf, Sparkles } from "lucide-react";
+import { buscar } from "../../services/Services";
 
 function ProdutosSaudaveis() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -11,7 +12,12 @@ function ProdutosSaudaveis() {
   async function buscarProdutos() {
     try {
       setIsLoading(true);
-      await buscar("/produto/recomendacoes", setProdutos);
+      // Ajuste a rota conforme seu backend
+      await buscar("/produto", setProdutos, {});
+      // Filtra apenas produtos saudáveis no frontend (se necessário)
+      // setProdutos(produtos.filter(p => p.saudavel));
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
     } finally {
       setIsLoading(false);
     }
@@ -22,40 +28,56 @@ function ProdutosSaudaveis() {
   }, []);
 
   return (
-    <section className="bg-linear-to-r from-[#E12727] to-[#FF9B00] py-16 px-6 text-white min-h-screen">
-      <h2 className="text-3xl font-extrabold mb-2 text-center drop-shadow-md">
-        Produtos Saudáveis Recomendados
-      </h2>
+    <section className="bg-gradient-to-b from-[#FFF0E0] to-white py-16 px-6 min-h-screen">
+      <div className="container mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Leaf className="w-10 h-10 text-green-600" />
+            <h2 className="text-4xl font-extrabold text-[#E12727]">
+              Produtos Saudáveis
+            </h2>
+            <Sparkles className="w-10 h-10 text-yellow-500" />
+          </div>
 
-      <p className="text-white/90 text-center mb-10 max-w-2xl mx-auto">
-        Escolha alimentos equilibrados e nutritivos para o seu cardápio.  
-        Promova sua saúde com nossas recomendações de pratos saudáveis!
-      </p>
-
-      {isLoading && (
-        <div className="flex justify-center w-full my-8">
-          <SyncLoader color="#ffffff" size={18} />
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Escolha alimentos equilibrados e nutritivos para o seu cardápio.
+            Promova sua saúde com nossas recomendações de pratos saudáveis!
+          </p>
         </div>
-      )}
 
-      {!isLoading && produtos.length === 0 && (
-        <span className="text-2xl text-center my-8 block">
-          Nenhum produto saudável foi encontrado!
-        </span>
-      )}
+        {/* Loading */}
+        {isLoading && (
+          <div className="flex justify-center w-full my-12">
+            <SyncLoader color="#E12727" size={18} />
+          </div>
+        )}
 
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto">
-        {produtos.map((produto) => (
-          <CardProduto
-            key={produto.id}
-            produto={produto}
-            exibirTags={true} /*as tags saudavél e disponivel devem estar configuradas no componente CardProduto.
-                            A exibição depende da interface CardProdutoProps e só vai ser ativada quando a alternativa é
-                                marcada como saudável. Uma boa ideia seria deixar as tags para produtos não-saudáveis tmb.
-                                Tipo propagandas de cigarro, mas não... Isso não seria atraente para os clientes*/
+        {/* Mensagem quando não há produtos */}
+        {!isLoading && produtos.length === 0 && (
+          <div className="text-center my-12">
+            <Leaf className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+            <span className="text-2xl text-gray-500 block">
+              Nenhum produto saudável foi encontrado!
+            </span>
+            <p className="text-gray-400 mt-2">
+              Cadastre produtos marcados como saudáveis para vê-los aqui.
+            </p>
+          </div>
+        )}
 
-/>
-        ))}
+        {/* Grid de Produtos */}
+        {!isLoading && produtos.length > 0 && (
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {produtos.map((produto) => (
+              <CardProduto
+                key={produto.id}
+                produto={produto}
+                exibirTags={true}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -2,36 +2,37 @@ import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import type Produto from "../../../models/Produto";
-import type Clientes from "../../../models/Clientes";
-import { atualizar, buscar, cadastrar } from "../../../services/service";
+import type Usuario from "../../../models/Usuario";
+import { atualizar, buscar, cadastrar } from "../../../services/Services";
 
 function FormProduto() {
   const navigate = useNavigate();
 
   const [produto, setProduto] = useState<Produto>({
     id: 0,
-    titulo: "",
+    nome: "", // ← Mudou de "titulo"
     descricao: "",
-    valor: 0,
-    status: false,
-    cliente: { id: 0 },
+    preco: 0, // ← Mudou de "valor"
+    quantidade: 0, // ← Novo campo
+    saudavel: false,
+    usuario: { id: 0 }, // ← Mudou de "cliente"
   });
 
-  const [clientes, setClientes] = useState<Clientes[]>([]);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
 
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    buscarClientes();
+    buscarUsuarios();
   }, []);
 
-  async function buscarClientes() {
+  async function buscarUsuarios() {
     try {
-      await buscar("/clientes", setClientes, {});
+      await buscar("/usuarios", setUsuarios, {}); // ← Ajuste a rota conforme seu backend
     } catch (error: any) {
-      console.error("Erro ao buscar clientes:", error);
+      console.error("Erro ao buscar usuários:", error);
     }
   }
 
@@ -40,18 +41,27 @@ function FormProduto() {
       setIsLoadingData(true);
       await buscar(
         `/produto/${id}`,
-        (dados) => {
-          console.log("Dados buscados:", dados);
+        (dados: {
+          id: any;
+          nome: any;
+          descricao: any;
+          preco: string;
+          quantidade: any;
+          saudavel: any;
+          usuario: any;
+        }) => {
+          console.log("Produto encontrado:", dados);
           setProduto({
             id: dados.id,
-            titulo: dados.titulo || "",
+            nome: dados.nome || "",
             descricao: dados.descricao || "",
-            valor:
-              typeof dados.valor === "string"
-                ? parseFloat(dados.valor)
-                : dados.valor || 0,
-            status: dados.status || false,
-            cliente: dados.cliente || { id: 0 },
+            preco:
+              typeof dados.preco === "string"
+                ? parseFloat(dados.preco)
+                : dados.preco || 0,
+            quantidade: dados.quantidade || 0,
+            saudavel: dados.saudavel || false,
+            usuario: dados.usuario || { id: 0 },
           });
         },
         {}
@@ -77,15 +87,15 @@ function FormProduto() {
   ) {
     const { name, value } = e.target;
 
-    if (name === "clienteId") {
+    if (name === "usuarioId") {
       setProduto({
         ...produto,
-        cliente: { id: parseInt(value) || 0 },
+        usuario: { id: parseInt(value) || 0 },
       });
-    } else if (name === "valor") {
+    } else if (name === "preco" || name === "quantidade") {
       setProduto({
         ...produto,
-        valor: parseFloat(value) || 0,
+        [name]: parseFloat(value) || 0,
       });
     } else {
       setProduto({
@@ -95,10 +105,10 @@ function FormProduto() {
     }
   }
 
-  function atualizarStatus(e: ChangeEvent<HTMLInputElement>) {
+  function atualizarSaudavel(e: ChangeEvent<HTMLInputElement>) {
     setProduto({
       ...produto,
-      status: e.target.checked,
+      saudavel: e.target.checked,
     });
   }
 
@@ -110,14 +120,20 @@ function FormProduto() {
     e.preventDefault();
     setIsLoading(true);
 
-    if (!produto.cliente?.id) {
-      alert("Selecione um cliente!");
+    if (!produto.usuario?.id) {
+      alert("Selecione um usuário!");
       setIsLoading(false);
       return;
     }
 
-    if (produto.valor <= 0) {
-      alert("Informe um valor válido!");
+    if (produto.preco <= 0) {
+      alert("Informe um preço válido!");
+      setIsLoading(false);
+      return;
+    }
+
+    if (produto.quantidade < 0) {
+      alert("Informe uma quantidade válida!");
       setIsLoading(false);
       return;
     }
@@ -126,37 +142,34 @@ function FormProduto() {
       if (id !== undefined) {
         // ATUALIZAR
         const dadosAtualizacao: any = {
-          titulo: produto.titulo,
-          valor: produto.valor,
-          status: produto.status,
+          nome: produto.nome,
+          preco: produto.preco,
+          quantidade: produto.quantidade,
+          saudavel: produto.saudavel,
         };
         if (produto.descricao) {
           dadosAtualizacao.descricao = produto.descricao;
         }
 
         console.log("Atualizando:", dadosAtualizacao);
-        await atualizar(
-          `/produto/${id}`,
-          dadosAtualizacao,
-          setProduto,
-          {}
-        );
+        await atualizar(`/produto/${id}`, dadosAtualizacao, setProduto, {});
         alert("Produto atualizado com sucesso!");
       } else {
         // CRIAR
         const dados = {
-          titulo: produto.titulo,
+          nome: produto.nome,
           descricao: produto.descricao,
-          valor: produto.valor,
-          status: produto.status,
-          cliente: produto.cliente,
+          preco: produto.preco,
+          quantidade: produto.quantidade,
+          saudavel: produto.saudavel,
+          usuario: produto.usuario,
         };
 
         console.log("Criando:", dados);
-        await cadastrar(`/produto`, dados, setProduto);
+        await cadastrar(`/produto`, dados, setProduto, {});
         alert("Produto cadastrado com sucesso!");
       }
-      retornar(); 
+      retornar();
     } catch (error: any) {
       console.error("Erro:", error);
       alert("Erro: " + (error.response?.data?.message || error.message));
@@ -174,63 +187,63 @@ function FormProduto() {
   }
 
   return (
-    <div className="bg-gradient-to-r from-from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] flex justify-center w-full min-h-screen items-center p-4">
+    <div className="bg-gradient-to-r from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] flex justify-center w-full min-h-screen items-center p-4">
       <div className="backdrop-blur-sm bg-white/90 rounded-2xl shadow-xl p-10 w-full max-w-md">
         <h1 className="text-4xl text-center my-8 text-gray-800">
           {id === undefined ? "Cadastrar Produto" : "Editar Produto"}
         </h1>
 
         <form className="flex flex-col gap-4" onSubmit={gerarNovoProduto}>
-          {/* Cliente - Só em cadastro */}
+          {/* Usuário - Só em cadastro */}
           {id === undefined && (
             <div className="flex flex-col gap-2">
               <label
-                htmlFor="clienteId"
+                htmlFor="usuarioId"
                 className="font-semibold text-gray-700"
               >
-                Cliente *
+                Usuário *
               </label>
               <select
-                name="clienteId"
-                id="clienteId"
+                name="usuarioId"
+                id="usuarioId"
                 className="border-2 border-slate-700 rounded p-2"
-                value={produto.cliente?.id || ""}
+                value={produto.usuario?.id || ""}
                 onChange={atualizarEstado}
                 required
               >
-                <option value="">Selecione um cliente</option>
-                {clientes.map((cliente) => (
-                  <option key={cliente.id} value={cliente.id}>
-                    {cliente.nome}
+                <option value="">Selecione um usuário</option>
+                {usuarios.map((usuario) => (
+                  <option key={usuario.id} value={usuario.id}>
+                    {usuario.nome}
                   </option>
                 ))}
               </select>
             </div>
           )}
 
-          {/* Cliente - Leitura em edição */}
+          {/* Usuário - Leitura em edição */}
           {id !== undefined && (
             <div className="flex flex-col gap-2">
-              <label className="font-semibold text-gray-700">Cliente</label>
+              <label className="font-semibold text-gray-700">Usuário</label>
               <div className="border-2 border-slate-300 rounded p-2 bg-gray-100 text-gray-700">
-                {clientes.find((c) => c.id === produto.cliente?.id)?.nome ||
+                {usuarios.find((u) => u.id === produto.usuario?.id)?.nome ||
                   "Carregando..."}
               </div>
             </div>
           )}
 
-          {/* Título */}
+          {/* Nome */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="titulo" className="font-semibold text-gray-700">
-              Título do Produto *
+            <label htmlFor="nome" className="font-semibold text-gray-700">
+              Nome do Produto *
             </label>
             <input
               type="text"
-              placeholder="Ex: Website Corporativo"
-              name="titulo"
-              id="titulo"
+              placeholder="Ex: Hambúrguer Vegano"
+              name="nome"
+              id="nome"
               className="border-2 border-slate-700 rounded p-2"
-              value={produto.titulo || ""}
+              value={produto.nome || ""}
               onChange={atualizarEstado}
               required
             />
@@ -243,7 +256,7 @@ function FormProduto() {
             </label>
             <input
               type="text"
-              placeholder="Descreva o Produto"
+              placeholder="Descreva o produto"
               name="descricao"
               id="descricao"
               className="border-2 border-slate-700 rounded p-2"
@@ -252,40 +265,57 @@ function FormProduto() {
             />
           </div>
 
-          {/* Valor */}
+          {/* Preço */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="valor" className="font-semibold text-gray-700">
-              Valor (R$) *
+            <label htmlFor="preco" className="font-semibold text-gray-700">
+              Preço (R$) *
             </label>
             <input
               type="number"
               step="0.01"
-              placeholder="Ex: 8000.00"
-              name="valor"
-              id="valor"
+              placeholder="Ex: 25.90"
+              name="preco"
+              id="preco"
               className="border-2 border-slate-700 rounded p-2"
-              value={produto.valor || 0}
+              value={produto.preco || 0}
               onChange={atualizarEstado}
               required
             />
           </div>
 
-          {/* Status */}
+          {/* Quantidade */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="quantidade" className="font-semibold text-gray-700">
+              Quantidade *
+            </label>
+            <input
+              type="number"
+              placeholder="Ex: 50"
+              name="quantidade"
+              id="quantidade"
+              className="border-2 border-slate-700 rounded p-2"
+              value={produto.quantidade || 0}
+              onChange={atualizarEstado}
+              required
+            />
+          </div>
+
+          {/* Saudável */}
           <div className="flex flex-col gap-2">
             <label
-              htmlFor="status"
+              htmlFor="saudavel"
               className="flex items-center cursor-pointer"
             >
               <input
                 type="checkbox"
-                name="status"
-                id="status"
-                checked={produto.status || false}
-                onChange={atualizarStatus}
+                name="saudavel"
+                id="saudavel"
+                checked={produto.saudavel || false}
+                onChange={atualizarSaudavel}
                 className="mr-2 w-4 h-4"
               />
               <span className="font-semibold text-gray-700">
-                Produto
+                Produto Saudável
               </span>
             </label>
           </div>

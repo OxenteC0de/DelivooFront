@@ -1,23 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type Produto from "../../../models/Produto";
-import { buscar, deletar } from "../../../services/service";
 import { ClipLoader } from "react-spinners";
+import { buscar, deletar } from "../../../services/Services";
+import { ToastAlerta } from "../../../utils/ToastAlerta";
+import { AuthContext } from "../../../contexts/AuthContext";
 
 function DeletarProduto() {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
-  const [produto, setProduto] = useState<Produto>({
-    id: 0,
-    titulo: "",
-    descricao: "",
-    valor: 0,
-    status: false,
-    cliente: { id: 0 },
-  });
-
+  const [produto, setProduto] = useState<Produto>({} as Produto);
+  const { usuario, handleLogout } = useContext(AuthContext);
+  const token = usuario.token;
+  
   const { id } = useParams<{ id: string }>();
 
   async function buscarPorId(id: string) {
@@ -25,32 +22,24 @@ function DeletarProduto() {
       setIsLoadingData(true);
       console.log("Buscando produto ID:", id);
 
-      await buscar(
-        `/produto/${id}`,
-        (dados) => {
-          console.log("Produto solicitado:", dados);
-          setProduto({
-            id: dados.id,
-            titulo: dados.titulo || "",
-            descricao: dados.descricao || "",
-            valor:
-              typeof dados.valor === "string"
-                ? parseFloat(dados.valor)
-                : dados.valor || 0,
-            status: dados.status || false,
-            cliente: dados.cliente || { id: 0 },
-          });
+      await buscar(`/produtos/${id}`, setProduto, {
+        headers: {
+          Authorization: token,
         },
-        {}
-      );
+      });
     } catch (error: any) {
-      console.error("Erro ao buscar produto:", error);
-      alert("Erro ao buscar produto: " + error.message);
-      retornar();
-    } finally {
-      setIsLoadingData(false);
+      if (error.toString().includes("401")) {
+        handleLogout();
+      }
     }
   }
+  
+    useEffect(() => {
+      if (token === "") {
+        ToastAlerta("Você precisa estar logado", "info");
+        navigate("/");
+      }
+    }, [token]);
 
   useEffect(() => {
     if (id !== undefined) {
@@ -67,15 +56,18 @@ function DeletarProduto() {
 
     try {
       console.log("Deletando produto ID:", id);
-      await deletar(`/produto/${id}`, {});
-      alert("Produto removido com sucesso!");
-      retornar();
+      await deletar(`/produto/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      ToastAlerta("Produto removido com sucesso!", "Sucecsso");
     } catch (error: any) {
       console.error("Erro ao deletar:", error);
       alert("Erro ao deletar o produto: " + error.message);
-    } finally {
-      setIsLoading(false);
     }
+     setIsLoading(false);
+     retornar();
   }
 
   function retornar() {
@@ -103,7 +95,7 @@ function DeletarProduto() {
 
         {produto.id === 0 ? (
           <div className="text-center text-white">
-            <p>Produto não encontrada</p>
+            <p>Produto não encontrado</p>
             <button
               onClick={retornar}
               className="mt-4 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
@@ -114,28 +106,36 @@ function DeletarProduto() {
         ) : (
           <div className="border border-gray-200 flex flex-col rounded-2xl overflow-hidden justify-between shadow-xl">
             <header className="py-2 px-6 bg-[#0077B6] text-white font-bold text-2xl">
-              {produto.titulo || "Sem título"}
+              {produto.nome || "Sem nome"}
             </header>
 
             <div className="p-6 bg-white min-h-[100px] flex flex-col gap-2">
               <p className="text-xl text-gray-700">
                 {produto.descricao || "Sem descrição"}
               </p>
+
               <p className="text-lg font-bold text-green-600">
                 R${" "}
-                {(typeof produto.valor === "string"
-                  ? parseFloat(produto.valor)
-                  : produto.valor || 0
+                {(typeof produto.preco === "string"
+                  ? parseFloat(produto.preco)
+                  : produto.preco || 0
                 ).toFixed(2)}
               </p>
-              {produto.cliente && produto.cliente.id && (
+
+              <p className="text-sm text-gray-600">
+                Quantidade em estoque:{" "}
+                <span className="font-semibold">{produto.quantidade}</span>
+              </p>
+
+              {produto.usuario && produto.usuario.id && (
                 <p className="text-sm text-gray-500">
-                  Cliente ID: {produto.cliente.id}
+                  Usuário ID: {produto.usuario.id}
                 </p>
               )}
-              {produto.status && (
-                <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded w-fit">
-                  Ativa
+
+              {produto.saudavel && (
+                <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded w-fit flex items-center gap-1">
+                  <span>✓</span> Produto Saudável
                 </span>
               )}
             </div>
@@ -171,3 +171,7 @@ function DeletarProduto() {
 }
 
 export default DeletarProduto;
+  function useContext(AuthContext: any): { usuario: any; handleLogout: any; } {
+    throw new Error("Function not implemented.");
+  }
+

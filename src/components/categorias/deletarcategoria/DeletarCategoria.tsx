@@ -1,79 +1,150 @@
-import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import type Categoria from '../../../models/Categoria';
-//import { AuthContext } from '../../../contexts/AuthContext';
-//import { buscar, deletar } from '../../../services/Service';
-//import { ToastAlerta } from '../../../utils/ToastAlearta';
-
-//obs: descomentar apos service, toastalert, eauthcontext estarem prontos (deixei apenas como alert aqui por enquanto pra testes e tals)
+import { useState, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import type Categoria from "../../../models/Categoria";
+import { ClipLoader } from "react-spinners";
+import { buscar, deletar } from "../../../services/Services";
+import { AuthContext } from "../../../contexts/AuthContext";
+import { ToastAlerta } from "../../../utils/ToastAlerta";
 
 function DeletarCategoria() {
-
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [categoria, setCategoria] = useState<Categoria>({
     id: 0,
-    descricao: ''
-  })
+    descricao: "",
+  });
+  const { usuario, handleLogout } = useContext(AuthContext);
+  const token = usuario.token;
+  const { id } = useParams<{ id: string }>();
 
-  const navigate = useNavigate()
+  useEffect(() => {
+    if (token === "") {
+      ToastAlerta("Você precisa estar logado", "info");
+      navigate("/");
+    }
+  }, [token]);
 
-  const {id} = useParams<{id: string}>()
-
-  //const {usuario} = useContext(AuthContext)
-
-  // dar um get por ID no backend
-  async function getCategoriaPorId(id: string) {
+  async function buscarPorId(id: string) {
     try {
-      await buscar(`/categorias/${id}`, setCategoria, {
-         headers: {Authorization: usuario.token}
-      })
-    } catch(error) {
-      alert('erro ao buscar a categoria!')
+      setIsLoadingData(true);
+      await buscar(
+        `/categorias/${id}`,
+        (dados: { id: any; descricao: any; }) => {
+          setCategoria({
+            id: dados.id,
+            descricao: dados.descricao || "",
+          });
+        },
+        {}
+      );
+    } catch (error: any) {
+      console.error("Erro ao buscar categoria:", error);
+      alert("Erro ao buscar categoria: " + error.message);
+      retornar();
+    } finally {
+      setIsLoadingData(false);
     }
   }
 
   useEffect(() => {
     if (id !== undefined) {
-      getCategoriaPorId(id)
+      buscarPorId(id);
     }
-  }, [id])
+  }, [id]);
 
-  // deletar o tema, se o usuario confirmar
   async function deletarCategoria() {
+    if (!window.confirm("Tem certeza que deseja deletar esta categoria?")) {
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
       await deletar(`/categorias/${id}`, {
-        headers: {Authorization: usuario.token}
-      })
-      alert('Categoria deletado com sucesso!')
-      navigate('/temas')
-    } catch (error) {
-      alert('Erro ao deletar a categoria!')
-    }
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      ToastAlerta("Categoria removida com sucesso!", "Sucesso");
+
+    } catch (error: any) {
+      console.error("Erro ao deletar:", error);
+      ToastAlerta("Erro ao deletar a categoria: ", "erro");
+    } 
+    setIsLoading(false);
+    retornar();
   }
 
-  function retornar(){
-    navigate('/categorias')
+  function retornar() {
+    navigate("/categorias");
+  }
+
+  if (isLoadingData) {
+    return (
+      <div className="bg-gradient-to-r from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] flex justify-center items-center w-full min-h-screen">
+        <ClipLoader color="white" size={50} />
+      </div>
+    );
   }
 
   return (
-    <div className='flex flex-col items-center gap-4'>
-      <h1 className='text-5xl font-bold text-stone-800'>Deletar tema</h1>
-      <p className='text-lg font-semibold'>Tem certeza de que deseja sumir de vez com isso?</p>
-      <div className="border-2 rounded-xl overflow-auto w-1/3">
-        <div className="bg-stone-900 text-white text-xl font-bold px-4 py-2">
-          Titulo
-        </div>
-        <div className="bg-slate-200 px-4 py-6 text-lg font-semibold">{categoria.descricao}</div>
-        <div className="flex">
-          <button
-            onClick={deletarCategoria}
-            className="flex-1 px-4 py-2 font-bold text-white bg-stone-600 hover:bg-stone-800 text-center"
-          >
-            Sim
-          </button>
-          <button onClick={retornar} className="flex-1 px-4 py-2 font-bold text-white bg-red-400 hover:bg-red-800">
-            Não
-          </button>
-        </div>
+    <div className="bg-gradient-to-r from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] flex justify-center items-center w-full min-h-screen p-4">
+      <div className="container w-full max-w-md">
+        <h1 className="text-4xl text-white text-center my-4">
+          Deletar Categoria
+        </h1>
+
+        <p className="text-center text-white font-semibold mb-4">
+          Você tem certeza de que deseja apagar a seguinte categoria?
+        </p>
+
+        {categoria.id === 0 ? (
+          <div className="text-center text-white">
+            <p>Categoria não encontrada</p>
+            <button
+              onClick={retornar}
+              className="mt-4 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+            >
+              Voltar
+            </button>
+          </div>
+        ) : (
+          <div className="border border-gray-200 flex flex-col rounded-2xl overflow-hidden justify-between shadow-xl">
+            <header className="py-4 px-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-2xl">
+              {categoria.descricao || "Sem descrição"}
+            </header>
+
+            <div className="p-6 bg-white min-h-[100px] flex flex-col gap-2">
+              <p className="text-sm text-gray-500">ID: {categoria.id}</p>
+            </div>
+
+            <div className="flex">
+              <button
+                className="w-full text-slate-100 bg-gray-500 hover:bg-gray-600
+                  flex items-center justify-center py-3 transition-colors"
+                onClick={retornar}
+                disabled={isLoading}
+              >
+                Não
+              </button>
+
+              <button
+                className="text-slate-100 bg-red-500 hover:bg-red-700 w-full
+                  flex items-center justify-center transition-colors disabled:opacity-50"
+                onClick={deletarCategoria}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ClipLoader color="white" size={24} />
+                ) : (
+                  <span>Sim</span>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

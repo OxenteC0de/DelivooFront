@@ -1,23 +1,22 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import type Usuario from '../../models/Usuario';
-import { cadastrarUsuario } from '../../services/Service';
-import { CircleLoader } from 'react-spinners';
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import type Usuario from "../../models/Usuario";
+import { CircleLoader } from "react-spinners";
+import { User, Mail, Lock, Image, CheckCircle2, XCircle } from "lucide-react";
+import { cadastrarUsuario } from "../../services/Services";
 
 function Cadastro() {
-  
   const navigate = useNavigate();
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const [confirmarSenha, setConfirmarSenha] = useState<string>('');
+  const [confirmarSenha, setConfirmarSenha] = useState<string>("");
+  const [senhaForte, setSenhaForte] = useState<boolean>(false);
 
   const [usuario, setUsuario] = useState<Usuario>({
     id: 0,
-    nome: '',
-    usuario: '',
-    senha: '',
-    foto: '',
+    nome: "",
+    usuario: "",
+    senha: "",
+    foto: "",
   });
 
   useEffect(() => {
@@ -26,13 +25,22 @@ function Cadastro() {
     }
   }, [usuario]);
 
+  useEffect(() => {
+    // Validação de força de senha
+    setSenhaForte(
+      usuario.senha.length >= 8 &&
+        /[A-Za-z]/.test(usuario.senha) &&
+        /[0-9]/.test(usuario.senha)
+    );
+  }, [usuario.senha]);
+
   function retornar() {
-    navigate('/login');
+    navigate("/login");
   }
 
   function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
-    setUsuario({     
-      ...usuario,      
+    setUsuario({
+      ...usuario,
       [e.target.name]: e.target.value,
     });
   }
@@ -41,7 +49,6 @@ function Cadastro() {
     setConfirmarSenha(e.target.value);
   }
 
-
   async function cadastrarNovoUsuario(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -49,133 +56,253 @@ function Cadastro() {
       setIsLoading(true);
 
       try {
-        await cadastrarUsuario('/usuarios/cadastrar', usuario, setUsuario);
-        alert('Usuário cadastrado, bem-vindo!');
+        await cadastrarUsuario("/usuarios/cadastrar", usuario, setUsuario);
+        alert("Usuário cadastrado, bem-vindo!");
       } catch (error) {
-        alert('Erro ao cadastar o usuário, tente novamente!');
+        alert("Erro ao cadastrar o usuário, tente novamente!");
         console.log(error);
       }
     } else {
-      alert('Senha incorreta!');
-      setUsuario({ ...usuario, senha: '' });
-      setConfirmarSenha('');
+      alert("Senha incorreta ou muito curta!");
+      setUsuario({ ...usuario, senha: "" });
+      setConfirmarSenha("");
     }
 
     setIsLoading(false);
   }
 
+  const senhasCoincidem =
+    confirmarSenha === usuario.senha && confirmarSenha !== "";
+
   return (
-    <>
-      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 font-sans">
-         <div className="hidden lg:flex flex-col justify-center items-center bg-gradient-to-br from-[#E12727] to-[#FF9B00] text-white relative overflow-hidden"></div>
-        <div className="hidden lg:flex flex-col justify-center items-center bg-gradient-to-br from-[#E12727] to-[#FF9B00] text-white relative overflow-hidden p-10">
-          <h1 className="text-5xl font-bold mb-4">Bem-vindo ao <span className="text-[#FFDD00]">Delivoo!</span>
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 font-sans">
+      {/* Seção de informações com imagem */}
+      <div className="hidden lg:flex flex-col justify-center items-center relative overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center transform scale-105 transition-transform duration-700"
+          style={{
+            backgroundImage:
+              "url('https://images.pexels.com/photos/31038188/pexels-photo-31038188.jpeg')",
+          }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-600/90 to-yellow-500/90"></div>
+
+        <div className="relative z-10 text-white px-12 text-center">
+          <h1 className="text-6xl font-black mb-6 drop-shadow-2xl">
+            Bem-vindo ao <span className="text-yellow-300">Delivoo!</span>
           </h1>
-          <p className="text-lg max-w-md text-center leading-relaxed">
-            <br/>
-            Cadastre seus pratos e mantenha seu cardápio atualizado com facilidade.
-        </p>
+          <p className="text-xl leading-relaxed max-w-lg drop-shadow-lg">
+            Cadastre seus pratos e mantenha seu cardápio atualizado com
+            facilidade. Transforme a gestão do seu restaurante!
+          </p>
+
+          {/* Elementos decorativos */}
+          <div className="mt-12 flex justify-center gap-8">
+            <div className="backdrop-blur-sm bg-white/10 rounded-2xl p-6 border border-white/20">
+              <p className="text-4xl font-bold">500+</p>
+              <p className="text-sm mt-2">Restaurantes</p>
+            </div>
+            <div className="backdrop-blur-sm bg-white/10 rounded-2xl p-6 border border-white/20">
+              <p className="text-4xl font-bold">10k+</p>
+              <p className="text-sm mt-2">Pratos Cadastrados</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Formulário de cadastro */}
+      <div className="flex flex-col justify-center items-center bg-gradient-to-br from-slate-50 to-orange-50 p-8 lg:p-12">
         <form
-          className="flex justify-center items-center flex-col w-5/6 lg:w-2/3 gap-4 mx-auto bg-white shadow-xl rounded-2xl p-8 my-8"
+          className="w-full max-w-lg bg-white shadow-2xl rounded-3xl p-10 space-y-5 border border-gray-100"
           onSubmit={cadastrarNovoUsuario}
         >
-            <h2 className="text-4xl font-extrabold text-[#B22222] mb-4">Cadastrar</h2>
-          <div className="flex flex-col w-full">
-            <label htmlFor="nome">Nome</label>
+          <div className="text-center mb-6">
+            <h2 className="text-4xl font-black bg-gradient-to-r from-orange-600 to-yellow-500 bg-clip-text text-transparent">
+              Criar Conta
+            </h2>
+            <p className="text-gray-600 text-sm mt-2">
+              Preencha seus dados para começar
+            </p>
+          </div>
+
+          {/* Campo Nome */}
+          <div className="space-y-2">
+            <label
+              htmlFor="nome"
+              className="text-sm font-semibold text-gray-700 flex items-center gap-2"
+            >
+              <User className="w-4 h-4 text-orange-600" />
+              Nome Completo
+            </label>
             <input
               type="text"
               name="nome"
               id="nome"
-              placeholder="Nome completo"
-              className="font-medium text-[#B22222] mb-1"
+              placeholder="Seu nome completo"
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all"
               value={usuario.nome}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                atualizarEstado(e)
-              }
+              onChange={atualizarEstado}
+              required
             />
           </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="usuario">Usuário</label>
+
+          {/* Campo Usuário/Email */}
+          <div className="space-y-2">
+            <label
+              htmlFor="usuario"
+              className="text-sm font-semibold text-gray-700 flex items-center gap-2"
+            >
+              <Mail className="w-4 h-4 text-orange-600" />
+              E-mail
+            </label>
             <input
-              type="text"
+              type="email"
               name="usuario"
               id="usuario"
-              placeholder="Seu e-mail"
-               className="border-2 border-[#FF9B00] rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#E12727] transition-all"
+              placeholder="seu@email.com"
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all"
               value={usuario.usuario}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                atualizarEstado(e)
-              }
+              onChange={atualizarEstado}
+              required
             />
           </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="foto">Foto</label>
+
+          {/* Campo Foto */}
+          <div className="space-y-2">
+            <label
+              htmlFor="foto"
+              className="text-sm font-semibold text-gray-700 flex items-center gap-2"
+            >
+              <Image className="w-4 h-4 text-orange-600" />
+              URL da Foto (opcional)
+            </label>
             <input
-              type="text"
+              type="url"
               name="foto"
               id="foto"
-              placeholder="URL da foto"
-             className="border-2 border-[#FF9B00] rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#E12727] transition-all"
+              placeholder="https://exemplo.com/foto.jpg"
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all"
               value={usuario.foto}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                atualizarEstado(e)
-              }
+              onChange={atualizarEstado}
             />
           </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="senha">Senha</label>
+
+          {/* Campo Senha com indicador */}
+          <div className="space-y-2">
+            <label
+              htmlFor="senha"
+              className="text-sm font-semibold text-gray-700 flex items-center gap-2"
+            >
+              <Lock className="w-4 h-4 text-orange-600" />
+              Senha
+            </label>
             <input
               type="password"
               name="senha"
               id="senha"
-              placeholder="Senha (minimo 8 caracteres)"
-              className="border-2 border-[#FF9B00] rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#E12727] transition-all"
+              placeholder="Mínimo 8 caracteres"
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all"
               value={usuario.senha}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                atualizarEstado(e)
-              }
+              onChange={atualizarEstado}
+              required
             />
+            {usuario.senha && (
+              <div className="flex items-center gap-2 text-sm">
+                {senhaForte ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    <span className="text-green-600 font-medium">
+                      Senha forte
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="w-4 h-4 text-red-500" />
+                    <span className="text-red-500 font-medium">
+                      Senha fraca (use letras e números)
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
           </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="confirmarSenha">Confirmar Senha</label>
+
+          {/* Campo Confirmar Senha */}
+          <div className="space-y-2">
+            <label
+              htmlFor="confirmarSenha"
+              className="text-sm font-semibold text-gray-700 flex items-center gap-2"
+            >
+              <Lock className="w-4 h-4 text-orange-600" />
+              Confirmar Senha
+            </label>
             <input
               type="password"
               name="confirmarSenha"
               id="confirmarSenha"
-              placeholder="Confirme sua senha"
-              className="border-2 border-[#FF9B00] rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#E12727] transition-all"
+              placeholder="Repita sua senha"
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all"
               value={confirmarSenha}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleConfirmarSenha(e)
-              }
+              onChange={handleConfirmarSenha}
+              required
             />
+            {confirmarSenha && (
+              <div className="flex items-center gap-2 text-sm">
+                {senhasCoincidem ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    <span className="text-green-600 font-medium">
+                      Senhas coincidem
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="w-4 h-4 text-red-500" />
+                    <span className="text-red-500 font-medium">
+                      Senhas não coincidem
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
           </div>
-          <div className="flex justify-around w-full gap-8 mt-4">
+
+          {/* Botões */}
+          <div className="flex gap-4 pt-4">
             <button
-              type="reset"
-              className="rounded-lg text-white bg-[#B22222] hover:bg-[#8B1A1A] w-1/2 py-2 font-semibold shadow-md transition-all"
+              type="button"
               onClick={retornar}
+              className="flex-1 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 transition-all active:scale-95"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="rounded-lg text-[#B22222] bg-[#FFDD00] hover:bg-[#FFCC00] w-1/2 py-2 font-semibold shadow-md transition-all flex justify-center items-center">
+              disabled={isLoading || !senhaForte || !senhasCoincidem}
+              className="flex-1 rounded-xl bg-gradient-to-r from-orange-600 to-yellow-500 hover:from-orange-500 hover:to-yellow-400 text-white font-bold py-3 shadow-lg hover:shadow-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+            >
               {isLoading ? (
-                <CircleLoader
-                  color='#B22222'
-                  size={24}
-
-                />
+                <CircleLoader color="#fff" size={24} />
               ) : (
-                <span>Cadastrar</span>
+                "Cadastrar"
               )}
             </button>
           </div>
+
+          <div className="text-center pt-4 border-t border-gray-200">
+            <p className="text-sm text-gray-600">
+              Já tem uma conta?{" "}
+              <Link
+                to="/login"
+                className="text-orange-600 font-bold hover:text-orange-700 underline underline-offset-2 transition-colors"
+              >
+                Fazer Login
+              </Link>
+            </p>
+          </div>
         </form>
-        </div>
       </div>
-    </>
+    </div>
   );
 }
 
