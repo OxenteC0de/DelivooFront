@@ -1,13 +1,27 @@
 import { Link } from "react-router-dom";
 import CardProduto from "../cardproduto/CardProduto";
-import { useEffect, useState } from "react";
 import { SyncLoader } from "react-spinners";
 import type Produto from "../../../models/Produto";
-import { buscar } from "../../../services/service";
+import { buscar } from "../../../services/Services";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../contexts/AuthContext";
+import { useContext, useEffect, useState } from "react";
+
 
 function ListaProdutos() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [produtos, setProdutos] = useState<Produto[]>([]);
+  const { usuario, handleLogout } = useContext(AuthContext);
+  const token = usuario.token;
+
+  
+  useEffect(() => {
+    if (token === "") {
+      ToastAlerta("Você precisa estar logado", "info");
+      navigate("/");
+    }
+  }, [token]);
 
   useEffect(() => {
     buscarProdutos();
@@ -16,7 +30,10 @@ function ListaProdutos() {
   async function buscarProdutos() {
     try {
       setIsLoading(true);
-      await buscar("/produto", setProdutos, {});
+
+      await buscar("/produto", setProdutos, {
+        headers: {Authorization: token},
+      });
     } catch (error: any) {
       console.error("Erro ao buscar produtos:", error);
       alert("Erro ao buscar produtos: " + error.message);
@@ -39,7 +56,7 @@ function ListaProdutos() {
             <div className="flex justify-between items-center mb-8">
               <h1 className="text-4xl font-bold text-white">Produtos</h1>
               <Link to="/produto/cadastrar">
-                <button className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:scale-105 hover:shadow-cyan-500/30 transition-transform duration-300">
+                <button className="bg-gradient-to-r bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:scale-105 hover:shadow-cyan-500/30 transition-transform duration-300">
                   + Novo produto
                 </button>
               </Link>
@@ -66,3 +83,7 @@ function ListaProdutos() {
 }
 
 export default ListaProdutos;
+function ToastAlerta(arg0: string, arg1: string) {
+  throw new Error("Function not implemented.");
+}
+

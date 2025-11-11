@@ -1,19 +1,58 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './pages/home/Home';
-import ProdutosSaudaveis from './pages/ProdutosSaudaveis';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import Navbar from "./components/navbar/Navbar";
+import Footer from "./components/footer/Footer";
+import Home from "./pages/home/Home";
+import Login from "./pages/login/Login";
+import Cadastro from "./pages/cadastro/Cadastro";
+import ProdutosSaudaveis from "./pages/produtossaudaveis/ProdutosSaudaveis";
+import ListaProdutos from "./components/produto/listaproduto/ListaProduto";
+import FormProduto from "./components/produto/formproduto/FormProduto";
+import DeletarProduto from "./components/produto/deletarproduto/DeletarProduto";
+import DeletarCategoria from "./components/categorias/deletarcategoria/DeletarCategoria";
+import FormCategoria from "./components/categorias/formcategoria/FormCategoria";
+import ListaCategorias from "./components/categorias/listacategoria/ListaCategoria";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <div className="min-h-[80vh]">
-        <Routes>
-          <Route path="/home" element={<Home />} />
-          <Route path="/produtos-saudaveis" element={<ProdutosSaudaveis />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Navigate to="/home" />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/cadastro" element={<Cadastro />} />
+
+              {/*Produtos*/}
+              <Route
+                path="/produto/recomendacoes"
+                element={<ProdutosSaudaveis />}
+              />
+              <Route path="/produto" element={<ListaProdutos />} />
+              <Route path="/produto/cadastrar" element={<FormProduto />} />
+              <Route path="/editarproduto/:id" element={<FormProduto />} />
+              <Route path="/deletarproduto/:id" element={<DeletarProduto />} />
+
+              {/*Categorias*/}
+              <Route path="/categorias" element={<ListaCategorias />} />
+              <Route path="/categorias/cadastrar" element={<FormCategoria />} />
+              <Route
+                path="/categorias/editar/:id"
+                element={<FormCategoria />}
+              />
+              <Route
+                path="/deletarcategorias/:id"
+                element={<DeletarCategoria />}
+              />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
