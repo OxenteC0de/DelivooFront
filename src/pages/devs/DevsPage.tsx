@@ -1,3 +1,4 @@
+import { LinkedinLogoIcon, GithubLogoIcon } from "@phosphor-icons/react";
 export default function DevsPage() {
   const devs = [
     {
@@ -11,7 +12,7 @@ export default function DevsPage() {
     {
       nome: "Dilvani Estrela",
       cargo: "Frontend Developer",
-      bio: "Especialista em APIs, banco de dados e arquitetura Node.js.",
+      bio: "Especialista em identidade visual, construindo pages harmoniosas e responsivas.",
       foto: "https://media.licdn.com/dms/image/v2/C5603AQFtV3U91SUD1g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1558430134472?e=1764201600&v=beta&t=r5OmHwxR07_RnTQaWEMhl60RBlXB4M-3A8B0AqNeiyM",
       linkedin: "https://www.linkedin.com/in/dilvani-estrela/",
       github: "https://github.com/Dilvaniestrela",
@@ -85,14 +86,14 @@ export default function DevsPage() {
                 target="_blank"
                 className="text-white/80 hover:text-white transition"
               >
-                <i className="fab fa-linkedin text-2xl"></i>
+                <LinkedinLogoIcon size={32} />
               </a>
               <a
                 href={dev.github}
                 target="_blank"
                 className="text-white/80 hover:text-white transition"
               >
-                <i className="fab fa-github text-2xl"></i>
+                <GithubLogoIcon size={32} />
               </a>
             </div>
           </div>

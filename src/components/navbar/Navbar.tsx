@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 function Navbar() {
     return(
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#FF512F] to-[#F09819] p-8 text-white">
+        <div className=" flex flex-col items-center justify-center bg-gradient-to-r from-[#FF512F] to-[#F09819] p-2 text-white">
             <div className="container flex justify-between text-lg mx-8">
         {/* Logo */}
         <Link to="/home" className="flex items-center space-x-2">

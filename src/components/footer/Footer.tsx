@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function Footer(){
     return(
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#FF512F] to-[#F09819] p-8 text-white">
+        <div className=" flex flex-col items-center justify-center bg-gradient-to-r from-[#FF512F] to-[#F09819] p-2 text-white">
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
 
         {/* Coluna 1: Logo e descrição */}
