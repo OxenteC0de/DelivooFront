@@ -12,6 +12,7 @@ import DeletarProduto from "./components/produto/deletarproduto/DeletarProduto";
 import DeletarCategoria from "./components/categorias/deletarcategoria/DeletarCategoria";
 import FormCategoria from "./components/categorias/formcategoria/FormCategoria";
 import ListaCategorias from "./components/categorias/listacategoria/ListaCategoria";
+import DevsPage from './pages/devs/DevsPage'
 
 function App() {
   return (
@@ -47,6 +48,9 @@ function App() {
                 path="/deletarcategorias/:id"
                 element={<DeletarCategoria />}
               />
+              
+              <Route path="/devs" element={<DevsPage />}/>
+
             </Routes>
           </main>
           <Footer />
