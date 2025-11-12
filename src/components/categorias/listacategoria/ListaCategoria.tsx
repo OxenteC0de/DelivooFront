@@ -47,7 +47,7 @@ function ListaCategorias() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-[#f75f41] to-[#F09819] min-h-screen py-8">
+    <div className="bg-gradient-to-b from-[#FFF0E0] to-white py-8 px-4 min-h-screen">
       <div className="container mx-auto px-4">
         {isLoading && (
           <div className="flex justify-center my-8">
