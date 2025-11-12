@@ -9,7 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { AuthContext } from "../../contexts/AuthContext";
 import type UsuarioLogin from "../../models/UsuarioLogin";
-import { User, Lock } from "lucide-react"; // Instale: npm install lucide-react
+import { User, Lock } from "lucide-react";
 
 function Login() {
   const navigate = useNavigate();
