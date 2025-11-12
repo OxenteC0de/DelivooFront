@@ -52,14 +52,6 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/produtos-saudaveis"
-                  className="text-white/80 hover:text-[#FFDD00] transition-colors text-sm flex items-center gap-2 hover:translate-x-1 duration-200"
-                >
-                  <span className="text-[#FFDD00]">›</span> Produtos Saudáveis
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/cadastro"
                   className="text-white/80 hover:text-[#FFDD00] transition-colors text-sm flex items-center gap-2 hover:translate-x-1 duration-200"
                 >
