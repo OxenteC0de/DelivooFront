@@ -1,167 +1,257 @@
-<p align="center">
-<img src="./src/assets/logo.png" alt="Logo Delivoo" width="350"/>
-</p>
+# 🍔 Delivoo
 
-### 📅 Data
-11/11/2025 
+### O sabor que chega voando
 
----
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
-🍔 **Delivoo — O sabor que chega voando**
-
-Somos uma plataforma de delivery de alimentos que conecta você aos melhores restaurantes da sua cidade — com apenas alguns cliques, seu prato favorito está a caminho.
-
-Mais do que entregas, oferecemos **experiências**.
-Seja um almoço no trabalho, um jantar especial ou aquele lanche de madrugada, a **Delivoo** está sempre pronta para levar sabor até você.
-
-Com **tecnologia inteligente, logística eficiente e um cardápio variado**, nossa missão é transformar sua fome em felicidade — todos os dias, a qualquer hora.
+[Demo ao Vivo](https://delivoo-front.vercel.app) • [Repositório Backend](https://github.com/OxenteC0de/DelivooBack) • [API Documentação](https://delivoo.onrender.com/swagger)
 
 ---
 
-🧩 **Funcionalidades por Módulo**
+## 📋 Sobre o Projeto
 
-👤 **Usuário**
+**Delivoo** é uma plataforma completa de gestão de cardápios e produtos para restaurantes, desenvolvida com tecnologias modernas e eficientes.
 
-- Criar, listar, editar e excluir conta com segurança.
+Mais do que um simples sistema de cadastro, o Delivoo oferece uma **experiência intuitiva e profissional** para restaurantes gerenciarem seus produtos, categorias e destacarem opções saudáveis para seus clientes.
 
-- Gerenciamento completo de autenticação e permissões.
+### 🎯 Objetivo
 
-🍱 **Categoria**
-
-- Cadastrar, filtrar e buscar categorias de alimentos.
-
-- Associação direta com produtos cadastrados.
-
-🛒 **Produto**
-
-- Criar, visualizar, atualizar e excluir produtos.
-
-- Controle de estoque e vinculação a categorias.
+Facilitar a gestão de cardápios digitais para restaurantes, permitindo:
+- Cadastro rápido e organizado de produtos  
+- Categorização eficiente  
+- Destaque automático de produtos saudáveis  
+- Controle de estoque em tempo real  
+- Interface moderna e responsiva  
 
 ---
 
-⚙️ **Funcionalidade Adicional**
+## ✨ Funcionalidades
 
-Implementamos um recurso para recomendar produtos saudáveis aos usuários.
+### 👤 Gestão de Usuários
+- ✅ Cadastro e autenticação segura com JWT  
+- ✅ Login/Logout com persistência de sessão  
+- ✅ Gerenciamento de perfil  
 
-Em um cenário em que o consumo de alimentos ultraprocessados e pouco nutritivos tem crescido de forma acelerada, o papel da tecnologia na promoção de hábitos alimentares saudáveis torna-se fundamental.
+### 🍱 Gestão de Categorias
+- ✅ CRUD completo de categorias  
+- ✅ Associação de produtos a categorias  
+- ✅ Busca e filtros avançados  
 
-A funcionalidade “Produtos Saudáveis” da **Delivoo** foi pensada justamente para contribuir com essa causa.
-Através dela, o sistema é capaz de recomendar e destacar alimentos mais equilibrados, ajudando os usuários a fazerem escolhas conscientes e benéficas à saúde no momento do pedido.
+### 🛒 Gestão de Produtos
+- ✅ CRUD completo de produtos  
+- ✅ Upload de fotos (via URL)  
+- ✅ Controle de estoque e preços  
+- ✅ Marcação de produtos saudáveis  
+- ✅ Vinculação a categorias  
 
-Além de facilitar a navegação e personalizar a experiência, esse recurso reforça o compromisso da plataforma com o bem-estar dos consumidores, incentivando práticas alimentares mais sustentáveis e equilibradas.
+### 🌿 Produtos Saudáveis (Diferencial)
+Em um cenário onde o consumo de alimentos ultraprocessados tem crescido, o Delivoo implementa um recurso que **recomenda e destaca produtos saudáveis**.
 
----
+**Funcionalidades:**
+- Destaque visual (tag verde)  
+- Seção exclusiva na página inicial  
+- Endpoints específicos para marcação e busca  
 
-**Principais Métodos**
+**Endpoints principais:**
 
-```bash
-@Get('/recomendacoes')
-recomendarProdutosSaudaveis(): Promise<Produto[]> {
-  return this.produtoService.recomendarProdutosSaudaveis();
-}
-
-@Patch(':id/saudavel')
-marcaSaudavel(@Param('id') id: number): Promise<Produto> {
-  return this.produtoService.marcarSaudavel(id);
-}
-
-@Patch(':id/nao-saudavel')
-marcaNaoSaudavel(@Param('id') id: number): Promise<Produto> {
-  return this.produtoService.marcarNaoSaudavel(id);
-}
 ```
 
-**Descrição dos métodos**
+GET /produto/recomendacoes // Lista produtos saudáveis  
+PATCH /produto/:id/saudavel // Marca produto como saudável  
+PATCH /produto/:id/nao-saudavel // Remove marcação de saudável
 
-- recomendarProdutosSaudaveis(): Retorna uma lista de produtos recomendados como saudáveis.
-
-- marcaSaudavel(id: number): Marca um produto como saudável.
-
----
-
-🧠 **Tecnologias Utilizadas**
-
-- TypeScript: Linguagem utilizada para tipagem e estruturação do código.
-- NestJS: Framework Node.js utilizado para criar a API.
-- MySQL: Banco de dados relacional do projeto.
-- TypeORM: ORM para mapeamento e manipulação de entidades.
-- Insomnia: Testes e requisições HTTP da API.
-- JWT (JSON Web Token):	Autenticação segura dos usuários.
-- Render:	Plataforma de deploy utilizada.
-- React: Biblioteca JavaScript utilizada para construção da interface do usuário (frontend) de forma dinâmica e componentizada.
-- Tailwind: Framework CSS utilitário usado para estilizar os componentes com rapidez e consistência, sem sair do HTML/JSX.
-- Axios: Biblioteca para realizar requisições HTTP entre o frontend e o backend, facilitando a comunicação com a API.
+```
 
 ---
 
-💻 **Como Rodar o Projeto**
+## 🛠️ Tecnologias Utilizadas
 
-🧾 **Pré-requisitos**
+### Frontend
+- **React 18 + TypeScript**  
+- **Tailwind CSS** para estilização  
+- **React Router** para navegação  
+- **Axios** para requisições HTTP  
+- **Lucide React** para ícones  
+- **React Toastify** para notificações  
+- **Context API** para gerenciamento de estado  
 
-Certifique-se de ter instalado em sua máquina:
+### Backend
+- **NestJS** (framework Node.js)  
+- **TypeORM** para ORM  
+- **PostgreSQL** como banco de dados  
+- **JWT** para autenticação  
+- **Swagger** para documentação da API  
+- **bcryptjs** para hash de senhas  
 
-- Git
-- Node.js (LTS)
-- npm ou Yarn
-- PostgreSQL
+### DevOps
+- **Vercel** (deploy do frontend)  
+- **Render** (deploy do backend + PostgreSQL)  
+- **Git/GitHub** (versionamento)  
 
 ---
 
-🚀 **Passo a Passo**
+## 🚀 Como Rodar o Projeto
 
-1️⃣ **Clonar o repositório**
+### 📦 Pré-requisitos
+Certifique-se de ter instalado:
+- [Git](https://git-scm.com/)  
+- [Node.js](https://nodejs.org/) (v18 ou superior)  
+- [PostgreSQL](https://www.postgresql.org/) (v14 ou superior)  
+---
+
+### 🖥️ Frontend
+
+#### 1️⃣ Clonar o repositório
 ```bash
 git clone https://github.com/OxenteC0de/DelivooFront.git
-cd Delivoo
+cd DelivooFront
+
 ```
 
-2️⃣ **Instalar as dependências**
+#### 2️⃣ Instalar dependências
+
 ```bash
 npm install
+
 ```
 
-3️⃣ **Configurar o banco de dados**
+#### 3️⃣ Configurar variáveis de ambiente
 
-No arquivo app.module.ts, configure suas credenciais:
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+VITE_API_URL=http://localhost:4000
+
+```
+
+#### 4️⃣ Rodar o projeto
+
 ```bash
- TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'db_delivoo',
-      entities: [],
-      synchronize: true,
-    })
+npm run dev
+
 ```
 
-4️⃣ **Rodar o projeto**
+✅ O frontend estará disponível em: [**http://localhost:5173**](http://localhost:5173/)
+
+----------
+
+### ⚙️ Backend
+
+#### 1️⃣ Clonar o repositório
+
+```bash
+git clone https://github.com/OxenteC0de/Delivoo
+cd Delivoo
+
+```
+
+#### 2️⃣ Instalar dependências
+
+```bash
+npm install
+
+```
+
+#### 3️⃣ Configurar variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+DATABASE_URL=postgres://user:password@localhost:5432/db_delivoo
+JWT_SECRET=sua_chave_secreta_aqui
+PORT=4000
+
+```
+
+Ou configure diretamente no `app.module.ts`:
+
+```ts
+TypeOrmModule.forRoot({
+  type: 'postgres',
+  host: 'localhost',
+  port: 5432,
+  username: 'seu_usuario',
+  password: 'sua_senha',
+  database: 'db_delivoo',
+  synchronize: true, // ⚠️ Apenas em desenvolvimento
+  ssl: false,
+});
+
+```
+
+#### 4️⃣ Rodar o projeto
+
 ```bash
 npm run start:dev
+
 ```
 
+✅ O backend estará disponível em: [**http://localhost:4000**](http://localhost:4000/)  
+✅ Swagger (documentação): [**http://localhost:4000/swagger**](http://localhost:4000/swagger)
+
+----------
+
+## 📸 Screenshots
+
+### 🏠 Home
+
+<img width="1695" height="928" alt="image" src="https://github.com/user-attachments/assets/80d1f196-b322-483d-b0b1-8002351668b8" />
+
+### 📋 Listagem de Produtos
+
+<img width="780" height="898" alt="image" src="https://github.com/user-attachments/assets/fd9b375b-05ea-44b4-86d0-1edf7900d0b6" />
+
+### 🌿 Produtos Saudáveis
+
+<img width="1544" height="606" alt="image" src="https://github.com/user-attachments/assets/091d736f-fa81-4ab4-b635-bb8568177d5d" />
+
+----------
+
+## 🌐 Links do Projeto
+
+-   **Frontend:** [https://delivoo-front.vercel.app](https://delivoo-front.vercel.app/)
+-   **Backend API:** [https://delivoo.onrender.com](https://delivoo.onrender.com/)
+-   **Swagger:** [https://delivoo.onrender.com/swagger](https://delivoo.onrender.com/swagger)
+
+----------
+## 👥 Equipe de Desenvolvimento
+
+| Nome                | Função                        |
+| ------------------- | ----------------------------- |
+| **William Almeida** | Scrum Master & Dev Full Stack |
+| **David Barbosa**   | Desenvolvedor & Documentação  |
+| **Dilvani Estrela** | Desenvolvedora & Design       |
+| **Janaína Bezerra** | Desenvolvedora                |
+| **Karine Santos**   | Desenvolvedora                |
+| **Tauane Soares**   | Desenvolvedora                |
+| **Winnie Sant'Ana** | Desenvolvedora                |
+
 ---
+## 📄 Licença
 
-✅ O servidor estará disponível em: 
+Este projeto está sob a licença **MIT**.  
+Consulte o arquivo [LICENSE](https://chatgpt.com/c/LICENSE) para mais detalhes.
 
-👉 http://localhost:4000
+----------
 
----
+## 🤝 Contribuindo
 
-**Equipe Responsável**
+Contribuições são bem-vindas!  
+Sinta-se à vontade para abrir _issues_ ou _pull requests_.
 
-David Barbosa – Desenvolvedor, documentação
+1.  Faça um fork do projeto
+2.  Crie uma branch para sua feature (`git checkout -b feature/NovaFeature`)
+3.  Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
+4.  Push para a branch (`git push origin feature/NovaFeature`)
+5.  Abra um Pull Request
 
-Dilvani – Desenvolvedora, identidade visual
+----------
 
-Janaína Bezerra – Desenvolvedora
 
-Karine Santos – Desenvolvedora
+Desenvolvido com ❤️ pela equipe **OxenteC0de**
+⭐ Deixe uma estrela se este projeto te ajudou!
 
-Tauane Soares – Desenvolvedora
-
-William Almeida – Scrum Master (líder), desenvolvedor
-
-Winnie Sant’Ana – Desenvolvedora
+----------
