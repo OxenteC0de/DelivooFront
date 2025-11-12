@@ -14,33 +14,28 @@ function DeletarCategoria() {
     id: 0,
     descricao: "",
   });
-  const { usuario, handleLogout } = useContext(AuthContext);
+  const { usuario } = useContext(AuthContext);
   const token = usuario.token;
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
     if (token === "") {
       ToastAlerta("Você precisa estar logado", "info");
-      navigate("/");
+      navigate("/login");
     }
-  }, [token]);
+  }, [token, navigate]);
 
   async function buscarPorId(id: string) {
     try {
       setIsLoadingData(true);
-      await buscar(
-        `/categorias/${id}`,
-        (dados: { id: any; descricao: any; }) => {
-          setCategoria({
-            id: dados.id,
-            descricao: dados.descricao || "",
-          });
+      await buscar(`/categorias/${id}`, setCategoria, {
+        headers: {
+          Authorization: token,
         },
-        {}
-      );
+      });
     } catch (error: any) {
       console.error("Erro ao buscar categoria:", error);
-      alert("Erro ao buscar categoria: " + error.message);
+      ToastAlerta("Erro ao buscar categoria", "erro");
       retornar();
     } finally {
       setIsLoadingData(false);
@@ -48,10 +43,10 @@ function DeletarCategoria() {
   }
 
   useEffect(() => {
-    if (id !== undefined) {
+    if (id !== undefined && token !== "") {
       buscarPorId(id);
     }
-  }, [id]);
+  }, [id, token]);
 
   async function deletarCategoria() {
     if (!window.confirm("Tem certeza que deseja deletar esta categoria?")) {
@@ -67,14 +62,14 @@ function DeletarCategoria() {
         },
       });
 
-      ToastAlerta("Categoria removida com sucesso!", "Sucesso");
-
+      ToastAlerta("Categoria removida com sucesso!", "sucesso");
+      retornar();
     } catch (error: any) {
       console.error("Erro ao deletar:", error);
-      ToastAlerta("Erro ao deletar a categoria: ", "erro");
-    } 
-    setIsLoading(false);
-    retornar();
+      ToastAlerta("Erro ao deletar a categoria", "erro");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function retornar() {
@@ -105,14 +100,14 @@ function DeletarCategoria() {
             <p>Categoria não encontrada</p>
             <button
               onClick={retornar}
-              className="mt-4 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+              className="mt-4 bg-orange-500 hover:bg-yellow-500 text-white px-4 py-2 rounded"
             >
               Voltar
             </button>
           </div>
         ) : (
           <div className="border border-gray-200 flex flex-col rounded-2xl overflow-hidden justify-between shadow-xl">
-            <header className="py-4 px-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-2xl">
+            <header className="py-4 px-6 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 text-white font-bold text-2xl">
               {categoria.descricao || "Sem descrição"}
             </header>
 
@@ -122,7 +117,7 @@ function DeletarCategoria() {
 
             <div className="flex">
               <button
-                className="w-full text-slate-100 bg-gray-500 hover:bg-gray-600
+                className="w-full text-slate-100 bg-orange-400 hover:bg-yellow-600
                   flex items-center justify-center py-3 transition-colors"
                 onClick={retornar}
                 disabled={isLoading}

@@ -1,12 +1,21 @@
-// src/components/categorias/formcategoria/FormCategoria.tsx
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  useEffect,
+  useState,
+  useContext,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import type Categoria from "../../../models/Categoria";
 import { atualizar, buscar, cadastrar } from "../../../services/Services";
+import { AuthContext } from "../../../contexts/AuthContext"; 
+import { ToastAlerta } from "../../../utils/ToastAlerta"; 
 
 function FormCategoria() {
   const navigate = useNavigate();
+  const { usuario } = useContext(AuthContext); 
+  const token = usuario.token; 
 
   const [categoria, setCategoria] = useState<Categoria>({
     id: 0,
@@ -18,35 +27,36 @@ function FormCategoria() {
 
   const { id } = useParams<{ id: string }>();
 
+  useEffect(() => {
+    if (token === "") {
+      ToastAlerta("Você precisa estar logado", "info");
+      navigate("/login");
+    }
+  }, [token, navigate]);
+
   async function buscarPorId(id: string) {
     try {
       setIsLoadingData(true);
-      await buscar(
-        `/categorias/${id}`,
-        (dados: { id: any; descricao: any; }) => {
-          console.log("Categoria encontrada:", dados);
-          setCategoria({
-            id: dados.id,
-            descricao: dados.descricao || "",
-          });
+      await buscar(`/categorias/${id}`, setCategoria, {
+        headers: {
+          Authorization: token,
         },
-        {}
-      );
+      });
     } catch (error: any) {
       console.error("Erro ao buscar categoria:", error);
-      alert("Erro ao buscar categoria: " + error.message);
+      ToastAlerta("Erro ao buscar categoria", "erro");
     } finally {
       setIsLoadingData(false);
     }
   }
 
   useEffect(() => {
-    if (id !== undefined) {
+    if (id !== undefined && token !== "") {
       buscarPorId(id);
-    } else {
+    } else if (id === undefined) {
       setIsLoadingData(false);
     }
-  }, [id]);
+  }, [id, token]);
 
   function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
     setCategoria({
@@ -64,7 +74,7 @@ function FormCategoria() {
     setIsLoading(true);
 
     if (!categoria.descricao.trim()) {
-      alert("A descrição é obrigatória!");
+      ToastAlerta("A descrição é obrigatória!", "erro");
       setIsLoading(false);
       return;
     }
@@ -73,25 +83,40 @@ function FormCategoria() {
       if (id !== undefined) {
         // ATUALIZAR
         await atualizar(
-          `/categorias/${id}`,
-          { descricao: categoria.descricao },
+          `/categorias`,
+          {
+            id: parseInt(id),
+            descricao: categoria.descricao,
+          },
           setCategoria,
-          {}
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
-        alert("Categoria atualizada com sucesso!");
+        ToastAlerta("Categoria atualizada com sucesso!", "sucesso");
       } else {
         // CRIAR
         await cadastrar(
           `/categorias`,
           { descricao: categoria.descricao },
-          setCategoria, {}
+          setCategoria,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
-        alert("Categoria cadastrada com sucesso!");
+        ToastAlerta("Categoria cadastrada com sucesso!", "sucesso");
       }
       retornar();
     } catch (error: any) {
       console.error("Erro:", error);
-      alert("Erro: " + (error.response?.data?.message || error.message));
+      ToastAlerta(
+        "Erro: " + (error.response?.data?.message || error.message),
+        "erro"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -131,9 +156,12 @@ function FormCategoria() {
           </div>
 
           <button
-            className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white px-8 py-3 
-              rounded-lg font-semibold shadow-lg 
-              hover:scale-105 hover:shadow-cyan-500/30 transition-transform duration-300"
+            className="bg-gradient-to-r from-[#E12727] to-[#FF9B00] 
+    hover:from-[#B22222] hover:to-[#CC7A00] 
+    text-white px-8 py-3 rounded-lg font-semibold 
+    shadow-lg hover:shadow-xl hover:scale-105 
+    transition-all duration-300 
+    disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
             disabled={isLoading}
           >
@@ -147,8 +175,8 @@ function FormCategoria() {
           <button
             type="button"
             onClick={retornar}
-            className="bg-gray-500 text-white px-8 py-3 rounded-lg font-semibold 
-              hover:bg-gray-600 transition-colors duration-300"
+            className="bg-red-500 text-white px-8 py-3 rounded-lg font-semibold 
+              hover:bg-red-800 transition-colors duration-300"
           >
             Cancelar
           </button>

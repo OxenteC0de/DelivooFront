@@ -1,4 +1,5 @@
 import { LinkedinLogoIcon, GithubLogoIcon } from "@phosphor-icons/react";
+
 export default function DevsPage() {
   const devs = [
     {

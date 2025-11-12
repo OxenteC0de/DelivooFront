@@ -64,14 +64,6 @@ function Navbar() {
               Categorias
             </Link>
 
-            <Link
-              to="/produto/recomendacoes"
-              className="text-white hover:text-[#FFDD00] transition-colors font-semibold flex items-center gap-2"
-            >
-              <ListOrdered className="w-4 h-4" />
-              Produtos Saudáveis
-            </Link>
-
             {usuario.token ? (
               <div className="flex items-center gap-4">
                 <span className="text-white font-medium flex items-center gap-2">
@@ -130,7 +122,7 @@ function Navbar() {
               Produtos
             </Link>
 
-            {/* ← NOVO link mobile para Categorias */}
+            {/* mobile para Categorias */}
             <Link
               to="/categorias"
               onClick={toggleMenu}
@@ -140,14 +132,6 @@ function Navbar() {
               Categorias
             </Link>
 
-            <Link
-              to="/produto/recomendacoes"
-              onClick={toggleMenu}
-              className="block text-white hover:text-[#FFDD00] transition-colors font-semibold flex items-center gap-2"
-            >
-              <ListOrdered className="w-4 h-4" />
-              Produtos Saudáveis
-            </Link>
 
             {usuario.token ? (
               <>
