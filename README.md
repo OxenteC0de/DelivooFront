@@ -2,6 +2,7 @@
 <img src="./src/assets/logo.png" alt="Logo Delivoo" width="350"/>
 </p>
 
+<<<<<<< HEAD
 # 🍔 Delivoo
 
 ### O sabor que chega voando
