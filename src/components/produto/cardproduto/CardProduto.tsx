@@ -1,6 +1,6 @@
 import type Produto from "../../../models/Produto";
 import { Link } from "react-router-dom";
-import { Edit, Trash2, CheckCircle, Leaf } from "lucide-react";
+import { Edit, Trash2, Leaf } from "lucide-react";
 
 interface CardProdutoProps {
   produto: Produto;
@@ -15,13 +15,21 @@ function CardProduto({ produto, exibirTags = false }: CardProdutoProps) {
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
-      {/* Header com gradiente */}
-      <div className="bg-gradient-to-r from-[#E12727] to-[#FF9B00] p-6 relative">
-        <h3 className="text-white font-bold text-xl truncate">
-          {produto.nome || "Sem título"}
-        </h3>
+      {/* Foto do Produto */}
+      <div className="relative h-48 overflow-hidden">
+        <img
+          src={
+            produto.foto || "https://via.placeholder.com/400x300?text=Sem+Foto"
+          }
+          alt={produto.nome}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          onError={(e) => {
+            e.currentTarget.src =
+              "https://via.placeholder.com/400x300?text=Sem+Foto";
+          }}
+        />
 
-        {/* Tags */}
+        {/* Tags por cima da foto */}
         {exibirTags && (
           <div className="absolute top-3 right-3 flex gap-2">
             {produto.saudavel && (
@@ -32,6 +40,13 @@ function CardProduto({ produto, exibirTags = false }: CardProdutoProps) {
             )}
           </div>
         )}
+      </div>
+
+      {/* Header com gradiente */}
+      <div className="bg-gradient-to-r from-[#E12727] to-[#FF9B00] p-4">
+        <h3 className="text-white font-bold text-xl truncate">
+          {produto.nome || "Sem título"}
+        </h3>
       </div>
 
       {/* Conteúdo */}
@@ -46,13 +61,8 @@ function CardProduto({ produto, exibirTags = false }: CardProdutoProps) {
               R$ {preco.toFixed(2)}
             </p>
             <p className="text-sm text-gray-500 mt-1">
-              Quantidade: {produto.quantidade}
+              Estoque: {produto.quantidade}
             </p>
-            {produto.usuario && produto.usuario.id && (
-              <p className="text-xs text-gray-400 mt-1">
-                Usuário ID: {produto.usuario.id}
-              </p>
-            )}
           </div>
         </div>
       </div>
@@ -61,7 +71,7 @@ function CardProduto({ produto, exibirTags = false }: CardProdutoProps) {
       <div className="flex border-t border-gray-100">
         <Link
           to={`/editarproduto/${produto.id}`}
-          className="flex-1 bg-gradient-to-r bg-gradient-to-br from-red-500 via-orange-500 to-yellow-500  text-white py-3 flex items-center justify-center gap-2 transition-all font-semibold"
+          className="flex-1 bg-gradient-to-br from-red-500 via-orange-500 to-yellow-500 hover:to-orange-200 text-white py-3 flex items-center justify-center gap-2 transition-all font-semibold"
         >
           <Edit className="w-4 h-4" />
           Editar

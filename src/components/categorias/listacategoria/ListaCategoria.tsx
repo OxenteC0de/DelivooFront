@@ -47,7 +47,7 @@ function ListaCategorias() {
   }
 
   return (
-    <div className="bg-gradient-to-r from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] min-h-screen py-8">
+    <div className="bg-gradient-to-br from-[#f75f41] to-[#F09819] min-h-screen py-8">
       <div className="container mx-auto px-4">
         {isLoading && (
           <div className="flex justify-center my-8">
@@ -104,7 +104,7 @@ function ListaCategorias() {
                         </Link>
 
                         <Link
-                          to={`c${categoria.id}`}
+                          to={`/categorias/deletar/${categoria.id}`}
                           className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-all font-semibold"
                         >
                           <Trash2 className="w-4 h-4" />

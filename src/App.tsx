@@ -5,7 +5,6 @@ import Footer from "./components/footer/Footer";
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import Cadastro from "./pages/cadastro/Cadastro";
-import ProdutosSaudaveis from "./pages/produtossaudaveis/ProdutosSaudaveis";
 import ListaProdutos from "./components/produto/listaproduto/ListaProduto";
 import FormProduto from "./components/produto/formproduto/FormProduto";
 import DeletarProduto from "./components/produto/deletarproduto/DeletarProduto";
@@ -22,36 +21,27 @@ function App() {
           <Navbar />
           <main className="flex-grow">
             <Routes>
+              {/*Home E login & cadastro*/}
               <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/home" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/cadastro" element={<Cadastro />} />
 
-              {/*Produtos*/}
-              <Route
-                path="/produto/recomendacoes"
-                element={<ProdutosSaudaveis />}
-              />
-              <Route path="/produto" element={<ListaProdutos />} />
-              <Route path="/produto/cadastrar" element={<FormProduto />} />
-              <Route path="/editarproduto/:id" element={<FormProduto />} />
-              <Route path="/deletarproduto/:id" element={<DeletarProduto />} />
+            {/*Produtos*/}
+            <Route path="/produto" element={<ListaProdutos />} />
+            <Route path="/produto/cadastrar" element={<FormProduto />} />
+            <Route path="/editarproduto/:id" element={<FormProduto />} />
+            <Route path="/deletarproduto/:id" element={<DeletarProduto />} />
 
-              {/*Categorias*/}
-              <Route path="/categorias" element={<ListaCategorias />} />
-              <Route path="/categorias/cadastrar" element={<FormCategoria />} />
-              <Route
-                path="/categorias/editar/:id"
-                element={<FormCategoria />}
-              />
-              <Route
-                path="/deletarcategorias/:id"
-                element={<DeletarCategoria />}
-              />
-              
-              <Route path="/devs" element={<DevsPage />}/>
+            {/*Categorias*/}
+            <Route path="/categorias" element={<ListaCategorias />} />
+            <Route path="/categorias/cadastrar" element={<FormCategoria />} />
+            <Route path="/categorias/editar/:id" element={<FormCategoria />}/>
+            <Route path="/categorias/deletar/:id" element={<DeletarCategoria/>} />
 
-            </Routes>
+            <Route path="/devs" element={<DevsPage />}/>
+
+          </Routes>
           </main>
           <Footer />
         </div>

@@ -1,38 +1,99 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  useEffect,
+  useState,
+  useContext,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import type Produto from "../../../models/Produto";
 import type Usuario from "../../../models/Usuario";
+import type Categoria from "../../../models/Categoria";
 import { atualizar, buscar, cadastrar } from "../../../services/Services";
+import { AuthContext } from "../../../contexts/AuthContext";
+import { ToastAlerta } from "../../../utils/ToastAlerta";
 
 function FormProduto() {
   const navigate = useNavigate();
+  const { usuario } = useContext(AuthContext);
+  const token = usuario.token;
 
   const [produto, setProduto] = useState<Produto>({
     id: 0,
-    nome: "", // ← Mudou de "titulo"
+    nome: "",
     descricao: "",
-    preco: 0, // ← Mudou de "valor"
-    quantidade: 0, // ← Novo campo
+    preco: 0,
+    quantidade: 0,
     saudavel: false,
-    usuario: { id: 0 }, // ← Mudou de "cliente"
+    foto: "",
+    categoria: { id: 0 },
+    usuario: { id: 0 },
   });
 
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
 
   const { id } = useParams<{ id: string }>();
+  const isEdicao = id !== undefined; // ← Identificar se é edição
 
   useEffect(() => {
-    buscarUsuarios();
-  }, []);
+    if (token === "") {
+      ToastAlerta("Você precisa estar logado", "info");
+      navigate("/login");
+    }
+  }, [token, navigate]);
+
+  useEffect(() => {
+    async function carregarDados() {
+      if (token !== "") {
+        try {
+          // Sempre buscar categorias
+          await buscarCategorias();
+
+          // Buscar usuários apenas se for CADASTRO (não edição)
+          if (!isEdicao) {
+            await buscarUsuarios();
+          }
+        } catch (error) {
+          console.error("Erro ao carregar dados:", error);
+        }
+      }
+    }
+
+    carregarDados();
+  }, []); 
+
+  //  Buscar produto por ID apenas quando id mudar
+  useEffect(() => {
+    if (isEdicao && token !== "") {
+      buscarPorId(id);
+    } else {
+      setIsLoadingData(false);
+    }
+  }, [id]);
 
   async function buscarUsuarios() {
     try {
-      await buscar("/usuarios", setUsuarios, {}); // ← Ajuste a rota conforme seu backend
+      await buscar("/usuarios/all", setUsuarios, {
+        headers: { Authorization: token },
+      });
     } catch (error: any) {
       console.error("Erro ao buscar usuários:", error);
+      ToastAlerta("Erro ao buscar usuários", "erro");
+    }
+  }
+
+  async function buscarCategorias() {
+    try {
+      await buscar("/categorias", setCategorias, {
+        headers: { Authorization: token },
+      });
+    } catch (error: any) {
+      console.error("Erro ao buscar categorias:", error);
+      ToastAlerta("Erro ao buscar categorias", "erro");
     }
   }
 
@@ -41,15 +102,7 @@ function FormProduto() {
       setIsLoadingData(true);
       await buscar(
         `/produto/${id}`,
-        (dados: {
-          id: any;
-          nome: any;
-          descricao: any;
-          preco: string;
-          quantidade: any;
-          saudavel: any;
-          usuario: any;
-        }) => {
+        (dados) => {
           console.log("Produto encontrado:", dados);
           setProduto({
             id: dados.id,
@@ -61,26 +114,23 @@ function FormProduto() {
                 : dados.preco || 0,
             quantidade: dados.quantidade || 0,
             saudavel: dados.saudavel || false,
+            foto: dados.foto || "",
+            categoria: dados.categoria || { id: 0 },
             usuario: dados.usuario || { id: 0 },
           });
         },
-        {}
+        {
+          headers: { Authorization: token },
+        }
       );
     } catch (error: any) {
       console.error("Erro ao buscar produto:", error);
-      alert("Erro ao buscar produto: " + error.message);
+      ToastAlerta("Erro ao buscar produto", "erro");
+      retornar();
     } finally {
       setIsLoadingData(false);
     }
   }
-
-  useEffect(() => {
-    if (id !== undefined) {
-      buscarPorId(id);
-    } else {
-      setIsLoadingData(false);
-    }
-  }, [id]);
 
   function atualizarEstado(
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -91,6 +141,11 @@ function FormProduto() {
       setProduto({
         ...produto,
         usuario: { id: parseInt(value) || 0 },
+      });
+    } else if (name === "categoriaId") {
+      setProduto({
+        ...produto,
+        categoria: { id: parseInt(value) || 0 },
       });
     } else if (name === "preco" || name === "quantidade") {
       setProduto({
@@ -120,59 +175,84 @@ function FormProduto() {
     e.preventDefault();
     setIsLoading(true);
 
-    if (!produto.usuario?.id) {
-      alert("Selecione um usuário!");
+    if (!produto.categoria?.id) {
+      ToastAlerta("Selecione uma categoria!", "erro");
       setIsLoading(false);
       return;
     }
 
-    if (produto.preco <= 0) {
-      alert("Informe um preço válido!");
+    if (!isEdicao && !produto.usuario?.id) {
+      ToastAlerta("Selecione um usuário!", "erro");
+      setIsLoading(false);
+      return;
+    }
+
+    const precoNumerico =
+      typeof produto.preco === "string"
+        ? parseFloat(produto.preco)
+        : produto.preco;
+
+    if (precoNumerico <= 0 || isNaN(precoNumerico)) {
+      ToastAlerta("Informe um preço válido!", "erro");
       setIsLoading(false);
       return;
     }
 
     if (produto.quantidade < 0) {
-      alert("Informe uma quantidade válida!");
+      ToastAlerta("Informe uma quantidade válida!", "erro");
       setIsLoading(false);
       return;
     }
 
     try {
-      if (id !== undefined) {
+      if (isEdicao) {
         // ATUALIZAR
-        const dadosAtualizacao: any = {
+        const dadosAtualizacao = {
+          id: parseInt(id),
           nome: produto.nome,
-          preco: produto.preco,
+          descricao: produto.descricao,
+          preco: precoNumerico.toString(),
           quantidade: produto.quantidade,
           saudavel: produto.saudavel,
+          foto: produto.foto || null,
+          categoria: { id: produto.categoria.id },
         };
-        if (produto.descricao) {
-          dadosAtualizacao.descricao = produto.descricao;
-        }
 
-        console.log("Atualizando:", dadosAtualizacao);
-        await atualizar(`/produto/${id}`, dadosAtualizacao, setProduto, {});
-        alert("Produto atualizado com sucesso!");
+        console.log("Atualizando produto:", dadosAtualizacao);
+
+        await atualizar(`/produto`, dadosAtualizacao, setProduto, {
+          headers: { Authorization: token },
+        });
+
+        ToastAlerta("Produto atualizado com sucesso!", "sucesso");
       } else {
         // CRIAR
         const dados = {
           nome: produto.nome,
           descricao: produto.descricao,
-          preco: produto.preco,
+          preco: precoNumerico.toString(),
           quantidade: produto.quantidade,
           saudavel: produto.saudavel,
-          usuario: produto.usuario,
+          foto: produto.foto || null,
+          categoria: { id: produto.categoria.id },
+          usuario: { id: produto.usuario.id }, 
         };
 
-        console.log("Criando:", dados);
-        await cadastrar(`/produto`, dados, setProduto, {});
-        alert("Produto cadastrado com sucesso!");
+        console.log("Criando produto:", dados);
+
+        await cadastrar(`/produto`, dados, setProduto, {
+          headers: { Authorization: token },
+        });
+
+        ToastAlerta("Produto cadastrado com sucesso!", "sucesso");
       }
       retornar();
     } catch (error: any) {
       console.error("Erro:", error);
-      alert("Erro: " + (error.response?.data?.message || error.message));
+      ToastAlerta(
+        "Erro: " + (error.response?.data?.message || error.message),
+        "erro"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -190,12 +270,11 @@ function FormProduto() {
     <div className="bg-gradient-to-r from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] flex justify-center w-full min-h-screen items-center p-4">
       <div className="backdrop-blur-sm bg-white/90 rounded-2xl shadow-xl p-10 w-full max-w-md">
         <h1 className="text-4xl text-center my-8 text-gray-800">
-          {id === undefined ? "Cadastrar Produto" : "Editar Produto"}
+          {isEdicao ? "Editar Produto" : "Cadastrar Produto"}
         </h1>
 
         <form className="flex flex-col gap-4" onSubmit={gerarNovoProduto}>
-          {/* Usuário - Só em cadastro */}
-          {id === undefined && (
+          {!isEdicao && (
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="usuarioId"
@@ -221,16 +300,39 @@ function FormProduto() {
             </div>
           )}
 
-          {/* Usuário - Leitura em edição */}
-          {id !== undefined && (
+          {isEdicao && produto.usuario?.nome && (
             <div className="flex flex-col gap-2">
-              <label className="font-semibold text-gray-700">Usuário</label>
+              <label className="font-semibold text-gray-700">Criado por</label>
               <div className="border-2 border-slate-300 rounded p-2 bg-gray-100 text-gray-700">
-                {usuarios.find((u) => u.id === produto.usuario?.id)?.nome ||
-                  "Carregando..."}
+                {produto.usuario.nome}
               </div>
             </div>
           )}
+
+          {/* Categoria*/}
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="categoriaId"
+              className="font-semibold text-gray-700"
+            >
+              Categoria *
+            </label>
+            <select
+              name="categoriaId"
+              id="categoriaId"
+              className="border-2 border-slate-700 rounded p-2"
+              value={produto.categoria?.id || ""}
+              onChange={atualizarEstado}
+              required
+            >
+              <option value="">Selecione uma categoria</option>
+              {categorias.map((categoria) => (
+                <option key={categoria.id} value={categoria.id}>
+                  {categoria.descricao}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Nome */}
           <div className="flex flex-col gap-2">
@@ -263,6 +365,37 @@ function FormProduto() {
               value={produto.descricao || ""}
               onChange={atualizarEstado}
             />
+          </div>
+          {/* Foto do Produto */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="foto" className="font-semibold text-gray-700">
+              URL da Foto (Opcional)
+            </label>
+            <input
+              type="url"
+              placeholder="https://exemplo.com/imagem.jpg"
+              name="foto"
+              id="foto"
+              className="border-2 border-slate-700 rounded p-2"
+              value={produto.foto || ""}
+              onChange={atualizarEstado}
+            />
+
+            {/* Preview da imagem */}
+            {produto.foto && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-600 mb-1">Preview:</p>
+                <img
+                  src={produto.foto}
+                  alt="Preview do produto"
+                  className="w-full h-48 object-cover rounded-lg border-2 border-gray-300"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://via.placeholder.com/400x300?text=Imagem+Inválida";
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           {/* Preço */}
@@ -321,24 +454,27 @@ function FormProduto() {
           </div>
 
           <button
-            className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white px-8 py-3 
-              rounded-lg font-semibold shadow-lg 
-              hover:scale-105 hover:shadow-cyan-500/30 transition-transform duration-300"
+            className="bg-gradient-to-r from-[#E12727] to-[#FF9B00] 
+           hover:from-[#B22222] hover:to-[#CC7A00] 
+          text-white px-8 py-3 rounded-lg font-semibold 
+            shadow-lg hover:shadow-xl hover:scale-105 
+            transition-all duration-300 
+            disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
             disabled={isLoading}
-          >
+>
             {isLoading ? (
               <ClipLoader color="white" size={24} />
             ) : (
-              <span>{id === undefined ? "Cadastrar" : "Atualizar"}</span>
+              <span>{isEdicao ? "Atualizar" : "Cadastrar"}</span>
             )}
           </button>
 
           <button
             type="button"
             onClick={retornar}
-            className="bg-gray-500 text-white px-8 py-3 rounded-lg font-semibold 
-              hover:bg-gray-600 transition-colors duration-300"
+            className="bg-red-500 text-white px-8 py-3 rounded-lg font-semibold 
+              hover:bg-red-800 transition-colors duration-300"
           >
             Cancelar
           </button>
