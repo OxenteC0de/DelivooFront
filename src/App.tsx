@@ -12,6 +12,7 @@ import DeletarCategoria from "./components/categorias/deletarcategoria/DeletarCa
 import FormCategoria from "./components/categorias/formcategoria/FormCategoria";
 import ListaCategorias from "./components/categorias/listacategoria/ListaCategoria";
 import DevsPage from './pages/devs/DevsPage'
+import Perfil from "./pages/perfil/Perfil";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/cadastro" element={<Cadastro />} />
+              <Route path="/perfil" element={<Perfil />} />
+
 
             {/*Produtos*/}
             <Route path="/produto" element={<ListaProdutos />} />

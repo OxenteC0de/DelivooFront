@@ -8,9 +8,8 @@ import {
   LogOut,
   User,
   Package,
-  ListOrdered,
   FolderOpen,
-} from "lucide-react"; 
+} from "lucide-react";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -55,7 +54,6 @@ function Navbar() {
               Produtos
             </Link>
 
-            {/* Categorias & Produtos */}
             <Link
               to="/categorias"
               className="text-white hover:text-[#FFDD00] transition-colors font-semibold flex items-center gap-2"
@@ -66,13 +64,18 @@ function Navbar() {
 
             {usuario.token ? (
               <div className="flex items-center gap-4">
-                <span className="text-white font-medium flex items-center gap-2">
+                {/* Link para Perfil com "Olá, [nome]" */}
+                <Link
+                  to="/perfil"
+                  className="text-white hover:text-[#FFDD00] transition-colors font-semibold flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full hover:bg-white/20"
+                >
                   <User className="w-4 h-4" />
-                  Olá, {usuario.usuario}
-                </span>
+                  Olá, {usuario.nome || usuario.usuario}
+                </Link>
+
                 <button
                   onClick={logout}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2 shadow-md"
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2 shadow-md hover:shadow-xl hover:scale-105"
                 >
                   <LogOut className="w-4 h-4" />
                   Sair
@@ -81,7 +84,7 @@ function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="bg-[#FFDD00] hover:bg-[#FFD000] text-[#B22222] px-6 py-2 rounded-full font-bold transition-all shadow-md"
+                className="bg-[#FFDD00] hover:bg-[#FFD000] text-[#B22222] px-6 py-2 rounded-full font-bold transition-all shadow-md hover:shadow-xl hover:scale-105"
               >
                 Entrar
               </Link>
@@ -122,7 +125,6 @@ function Navbar() {
               Produtos
             </Link>
 
-            {/* mobile para Categorias */}
             <Link
               to="/categorias"
               onClick={toggleMenu}
@@ -132,13 +134,18 @@ function Navbar() {
               Categorias
             </Link>
 
-
             {usuario.token ? (
               <>
-                <div className="text-white font-medium flex items-center gap-2 py-2">
+                {/* Link para Perfil Mobile */}
+                <Link
+                  to="/perfil"
+                  onClick={toggleMenu}
+                  className="block text-white hover:text-[#FFDD00] transition-colors font-semibold flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg"
+                >
                   <User className="w-4 h-4" />
-                  Olá, {usuario.usuario}
-                </div>
+                  Olá, {usuario.nome || usuario.usuario}
+                </Link>
+
                 <button
                   onClick={() => {
                     logout();
