@@ -1,8 +1,7 @@
-<p align="center">
+<img width="780" height="898" alt="image" src="https://github.com/user-attachments/assets/7d151e1f-8e09-4f0c-9731-f4d1ff176f06" /><img width="1695" height="928" alt="image" src="https://github.com/user-attachments/assets/e1dff90b-8135-408e-9d1a-97e32c565491" /><img width="1695" height="928" alt="image" src="https://github.com/user-attachments/assets/6d8753ea-61ff-41d5-ae4a-5c9b0c1fd089" /><p align="center">
 <img src="./src/assets/logo.png" alt="Logo Delivoo" width="350"/>
 </p>
 
-<<<<<<< HEAD
 # 🍔 Delivoo
 
 ### O sabor que chega voando
@@ -203,15 +202,15 @@ npm run start:dev
 
 ### 🏠 Home
 
-![[Pasted image 20251112082816.png]]
+<img width="1695" height="928" alt="image" src="https://github.com/user-attachments/assets/80d1f196-b322-483d-b0b1-8002351668b8" />
 
 ### 📋 Listagem de Produtos
 
-![[Pasted image 20251112082928.png]]
-![[Pasted image 20251112083003.png]]
+<img width="780" height="898" alt="image" src="https://github.com/user-attachments/assets/fd9b375b-05ea-44b4-86d0-1edf7900d0b6" />
+
 ### 🌿 Produtos Saudáveis
 
-![[Pasted image 20251112082942.png]]
+<img width="1544" height="606" alt="image" src="https://github.com/user-attachments/assets/091d736f-fa81-4ab4-b635-bb8568177d5d" />
 
 ----------
 
