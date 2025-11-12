@@ -1,7 +1,3 @@
-<img width="780" height="898" alt="image" src="https://github.com/user-attachments/assets/7d151e1f-8e09-4f0c-9731-f4d1ff176f06" /><img width="1695" height="928" alt="image" src="https://github.com/user-attachments/assets/e1dff90b-8135-408e-9d1a-97e32c565491" /><img width="1695" height="928" alt="image" src="https://github.com/user-attachments/assets/6d8753ea-61ff-41d5-ae4a-5c9b0c1fd089" /><p align="center">
-<img src="./src/assets/logo.png" alt="Logo Delivoo" width="350"/>
-</p>
-
 # 🍔 Delivoo
 
 ### O sabor que chega voando
