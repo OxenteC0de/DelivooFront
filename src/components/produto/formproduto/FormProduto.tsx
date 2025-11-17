@@ -267,7 +267,7 @@ function FormProduto() {
   }
 
   return (
-    <div className="bg-gradient-to-r from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] flex justify-center w-full min-h-screen items-center p-4">
+    <div className="bg-gradient-to-b from-[#FFF0E0] to-white flex justify-center w-full min-h-screen items-center p-4">
       <div className="backdrop-blur-sm bg-white/90 rounded-2xl shadow-xl p-10 w-full max-w-md">
         <h1 className="text-4xl text-center my-8 text-gray-800">
           {isEdicao ? "Editar Produto" : "Cadastrar Produto"}
@@ -462,7 +462,7 @@ function FormProduto() {
             disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
             disabled={isLoading}
->
+          >
             {isLoading ? (
               <ClipLoader color="white" size={24} />
             ) : (

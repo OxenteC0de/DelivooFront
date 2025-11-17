@@ -93,25 +93,25 @@ function DeletarProduto() {
 
   if (isLoadingData) {
     return (
-      <div className="bg-gradient-to-r from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] flex justify-center items-center w-full min-h-screen">
+      <div className="bg-gradient-to-b from-[#FFF0E0] to-white] flex justify-center items-center w-full min-h-screen">
         <ClipLoader color="white" size={50} />
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-r from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] flex justify-center items-center w-full min-h-screen p-4">
+    <div className="bg-gradient-to-b from-[#FFF0E0] to-white flex justify-center items-center w-full min-h-screen p-4">
       <div className="container w-full max-w-md">
-        <h1 className="text-4xl text-white text-center my-4">
+        <h1 className="text-4xl text-black text-center my-4">
           Deletar Produto
         </h1>
 
-        <p className="text-center text-white font-semibold mb-4">
+        <p className="text-center text-black font-semibold mb-4">
           Você tem certeza de que deseja apagar o seguinte produto?
         </p>
 
         {produto.id === 0 ? (
-          <div className="text-center text-white">
+          <div className="text-center text-black">
             <p>Produto não encontrado</p>
             <button
               onClick={retornar}
