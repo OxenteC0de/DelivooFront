@@ -9,6 +9,8 @@ import {
   User,
   Package,
   FolderOpen,
+  Target,
+  BarChart2,
 } from "lucide-react";
 
 function Navbar() {
