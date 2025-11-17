@@ -6,6 +6,8 @@ import {
   Facebook,
   Instagram,
   Twitter,
+  Github,
+  Linkedin,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -106,13 +108,13 @@ function Footer() {
             </p>
             <div className="flex gap-3">
               <a
-                href="https://facebook.com"
+                href="https://github.com/OxenteC0de"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white/10 hover:bg-[#FFDD00] hover:text-[#B22222] p-3 rounded-full transition-all hover:scale-110 duration-300 shadow-lg"
-                aria-label="Facebook"
+                aria-label="Github"
               >
-                <Facebook className="w-5 h-5" />
+                <Github className="w-5 h-5" />
               </a>
               <a
                 href="https://instagram.com"
@@ -124,13 +126,13 @@ function Footer() {
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="https://twitter.com"
+                href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white/10 hover:bg-[#FFDD00] hover:text-[#B22222] p-3 rounded-full transition-all hover:scale-110 duration-300 shadow-lg"
-                aria-label="Twitter"
+                aria-label="Linkedin"
               >
-                <Twitter className="w-5 h-5" />
+                <Linkedin className="w-5 h-5" />
               </a>
             </div>
           </div>

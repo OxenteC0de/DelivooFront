@@ -31,8 +31,17 @@ function Navbar() {
           {/* Logo */}
           <Link to="/home" className="flex items-center gap-2 group">
             <ChefHat className="text-[#FFDD00] w-8 h-8 group-hover:rotate-12 transition-transform" />
-            <span className="text-white text-2xl font-bold">
-              Deli<span className="text-[#FFDD00]">voo</span>
+
+            <span className="text-white text-2xl font-bold flex items-center">
+              Deli
+              <span className="text-[#FFDD00] flex items-center">
+                v
+                <span className="flex items-center relative top-[2px]">
+                  {/* ajuste fino: top-[1px], top-[2px], top-[3px] */}
+                  <Target className="w-5 h-5 inline-block" />
+                  <Target className="w-5 h-5 inline-block -ml-1" />
+                </span>
+              </span>
             </span>
           </Link>
 

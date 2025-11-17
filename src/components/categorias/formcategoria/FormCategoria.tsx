@@ -124,14 +124,14 @@ function FormCategoria() {
 
   if (isLoadingData) {
     return (
-      <div className="bg-gradient-to-r from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] flex justify-center w-full min-h-screen items-center">
+      <div className="bg-gradient-to-b from-[#FFF0E0] to-white flex justify-center w-full min-h-screen items-center">
         <ClipLoader color="white" size={50} />
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-r from-[#fef7e9] via-[#fc9035] to-[#f9e2bb] flex justify-center w-full min-h-screen items-center p-4">
+    <div className="bg-gradient-to-b from-[#FFF0E0] to-white flex justify-center w-full min-h-screen items-center p-4">
       <div className="backdrop-blur-sm bg-white/90 rounded-2xl shadow-xl p-10 w-full max-w-md">
         <h1 className="text-4xl text-center my-8 text-gray-800">
           {id === undefined ? "Cadastrar Categoria" : "Editar Categoria"}
