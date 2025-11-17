@@ -47,7 +47,7 @@ export default function DevsPage() {
       nome: "Winnie Sant'Ana",
       cargo: "Frontend Developer",
       bio: "Transforma ideias em experiências digitais incríveis.",
-      foto: "https://media.licdn.com/dms/image/v2/D4D03AQEu1cR1lv4a4w/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1694560536092?e=1764201600&v=beta&t=nXiddyrMsnneaPeoy4ho83LccCd_8CR1uFnMQ4-MOok",
+      foto: "https://media.licdn.com/dms/image/v2/D4D03AQHR6t1LWXLjUg/profile-displayphoto-scale_200_200/B4DZp9XHYBGgAY-/0/1763039807655?e=1764806400&v=beta&t=-ESGNbmo5QiWMvE-paW7aWYn3HV9lxSaMMXwor-9bk0",
       linkedin: "https://www.linkedin.com/in/winniesantana/",
       github: "https://github.com/wssant",
     },
