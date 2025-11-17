@@ -9,7 +9,6 @@ import {
   User,
   Package,
   FolderOpen,
-  Target,
 } from "lucide-react";
 
 function Navbar() {
